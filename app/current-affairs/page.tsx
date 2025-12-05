@@ -157,7 +157,7 @@ export default function CurrentAffairsPage() {
                                         {digest.downloadCount.toLocaleString()}
                                     </Badge>
                                 </div>
-                                <Button variant="outline" size="sm" className="w-full gap-2 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors">
+                                <Button variant="secondary" size="sm" className="w-full gap-2 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors">
                                     <Download className="h-4 w-4" />
                                     Download PDF
                                 </Button>

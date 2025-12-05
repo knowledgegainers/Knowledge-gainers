@@ -271,16 +271,16 @@ export default function ExamPapersPage() {
 
                                 <div className="flex items-center gap-4 text-sm text-muted-foreground mb-5">
                                     <div className="flex items-center gap-1.5">
-                                        <Calendar className="h-4 w-4" />
+                                        <Calendar className="h-4 w-4 text-black" />
                                         <span>{paper.year}</span>
                                     </div>
                                     <div className="flex items-center gap-1.5">
-                                        <Download className="h-4 w-4" />
+                                        <Download className="h-4 w-4 text-black" />
                                         <span>{paper.downloads.toLocaleString()}</span>
                                     </div>
                                 </div>
 
-                                <Button variant="outline" size="sm" className="w-full gap-2 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors">
+                                <Button variant="secondary" size="sm" className="w-full gap-2 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors">
                                     <Download className="h-4 w-4" />
                                     Download Paper
                                 </Button>

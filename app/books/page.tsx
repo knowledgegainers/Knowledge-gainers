@@ -197,10 +197,6 @@ export default function BooksPage() {
                                     <List className="h-4 w-4 text-black" />
                                 </button>
                             </div>
-                            <Button className="gap-2 hidden sm:flex">
-                                <Upload className="h-4 w-4 text-black" />
-                                Upload Book
-                            </Button>
                         </div>
                     </div>
                 </div>
@@ -252,7 +248,7 @@ export default function BooksPage() {
                                             <Download className="h-4 w-4" />
                                             <span>{book.downloads.toLocaleString()}</span>
                                         </div>
-                                        <Button variant="outline" size="sm" className="w-full gap-2">
+                                        <Button variant="secondary" size="sm" className="w-full gap-2">
                                             <Download className="h-4 w-4" />
                                             Download
                                         </Button>

@@ -74,7 +74,7 @@ export function LatestExamPapersSection() {
                         </h2>
                     </div>
                     <Link href="/exam-papers">
-                        <Button variant="outline" className="gap-2 group">
+                        <Button variant="secondary" className="gap-2 group">
                             View All Papers
                             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                         </Button>
@@ -115,7 +115,7 @@ export function LatestExamPapersSection() {
                                 </div>
                             </div>
 
-                            <Button variant="outline" size="sm" className="w-full gap-2 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors">
+                            <Button variant="secondary" size="sm" className="w-full gap-2 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors">
                                 <Download className="h-4 w-4" />
                                 Download Paper
                             </Button>

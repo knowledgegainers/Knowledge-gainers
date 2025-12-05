@@ -55,7 +55,7 @@ export function LatestBooksSection() {
                         </h2>
                     </div>
                     <Link href="/books">
-                        <Button variant="outline" className="gap-2 group">
+                        <Button variant="secondary" className="gap-2 group">
                             View All Books
                             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                         </Button>
@@ -77,8 +77,8 @@ export function LatestBooksSection() {
                                     alt={book.title}
                                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                                <Badge className="absolute top-3 left-3 bg-white text-primary hover:bg-primary hover:text-white">
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <Badge className="absolute top-3 left-3 bg-white text-black hover:bg-primary hover:text-white">
                                     {book.category}
                                 </Badge>
                             </div>
@@ -95,7 +95,7 @@ export function LatestBooksSection() {
                                     <Download className="h-4 w-4" />
                                     <span>{book.downloads.toLocaleString()}</span>
                                 </div>
-                                <Button variant="outline" size="sm" className="w-full gap-2">
+                                <Button variant="secondary" size="sm" className="w-full gap-2">
                                     <Download className="h-4 w-4" />
                                     Download
                                 </Button>
