@@ -130,7 +130,7 @@ export default function BooksPage() {
 
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
                     <div className="max-w-3xl">
-                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
+                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500 text-white text-sm font-medium mb-6">
                             <BookOpen className="h-4 w-4" />
                             Study Materials
                         </div>
@@ -167,12 +167,12 @@ export default function BooksPage() {
                         {/* Search & Actions */}
                         <div className="flex items-center gap-3 w-full lg:w-auto">
                             <div className="relative flex-1 lg:w-64">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black" />
                                 <Input
                                     placeholder="Search books..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="pl-10"
+                                    className="pl-10 text-black"
                                 />
                             </div>
                             <div className="flex items-center gap-1 border border-border rounded-lg p-1">
@@ -180,25 +180,25 @@ export default function BooksPage() {
                                     onClick={() => setViewMode("grid")}
                                     className={cn(
                                         "p-2 rounded-md transition-colors",
-                                        viewMode === "grid" ? "bg-primary text-primary-foreground" : "hover:bg-accent"
+                                        viewMode === "grid" ? "bg-primary text-black" : "hover:bg-blue"
                                     )}
                                     aria-label="Grid view"
                                 >
-                                    <Grid className="h-4 w-4" />
+                                    <Grid className="h-4 w-4 text-black" />
                                 </button>
                                 <button
                                     onClick={() => setViewMode("list")}
                                     className={cn(
                                         "p-2 rounded-md transition-colors",
-                                        viewMode === "list" ? "bg-primary text-primary-foreground" : "hover:bg-accent"
+                                        viewMode === "list" ? "bg-primary text-black" : "hover:bg-blue"
                                     )}
                                     aria-label="List view"
                                 >
-                                    <List className="h-4 w-4" />
+                                    <List className="h-4 w-4 text-black" />
                                 </button>
                             </div>
                             <Button className="gap-2 hidden sm:flex">
-                                <Upload className="h-4 w-4" />
+                                <Upload className="h-4 w-4 text-black" />
                                 Upload Book
                             </Button>
                         </div>
@@ -232,7 +232,7 @@ export default function BooksPage() {
                                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                                        <Badge className="absolute top-3 left-3 bg-white hover:bg-primary text-primary">
+                                        <Badge className="absolute top-3 left-3 bg-white hover:bg-primary text-black">
                                             {categoryLabels[book.category]}
                                         </Badge>
                                     </div>

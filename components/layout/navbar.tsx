@@ -95,13 +95,13 @@ export function Navbar() {
                     {/* Mobile Menu Button */}
                     <button
                         onClick={() => setIsOpen(!isOpen)}
-                        className="lg:hidden p-2 rounded-lg hover:bg-accent transition-colors"
+                        className="lg:hidden p-2 rounded-lg hover:bg-black  "
                         aria-label="Toggle menu"
                     >
                         {isOpen ? (
-                            <X className="h-6 w-6" />
+                            <X className="h-6 w-6  text-black" />
                         ) : (
-                            <Menu className="h-6 w-6" />
+                            <Menu className="h-6 w-6 text-black" />
                         )}
                     </button>
                 </div>
@@ -118,8 +118,8 @@ export function Navbar() {
                                     className={cn(
                                         "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200",
                                         pathname === link.href
-                                            ? "bg-primary/10 text-primary"
-                                            : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                                            ? "bg-primary/10 text-black"
+                                            : "text-black hover:text-black hover:bg-accent"
                                     )}
                                 >
                                     {link.icon && <link.icon className="h-4 w-4" />}

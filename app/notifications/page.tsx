@@ -133,8 +133,8 @@ export default function NotificationsPage() {
 
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
                     <div className="max-w-3xl">
-                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-                            <Bell className="h-4 w-4" />
+                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500 text-white text-sm font-medium mb-6">
+                            <Bell className="h-4 w-4 " />
                             Stay Updated
                         </div>
                         <h1 className="text-4xl sm:text-5xl font-bold mb-4">
@@ -168,21 +168,18 @@ export default function NotificationsPage() {
                             ))}
                         </div>
 
-                        {/* Search & Add */}
+                        {/* Search */}
                         <div className="flex items-center gap-3 w-full sm:w-auto">
                             <div className="relative flex-1 sm:w-64">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black" />
                                 <Input
                                     placeholder="Search notifications..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="pl-10"
+                                    className="pl-10 text-black"
                                 />
                             </div>
-                            <Button className="gap-2 hidden sm:flex">
-                                <Plus className="h-4 w-4" />
-                                Add Notification
-                            </Button>
+
                         </div>
                     </div>
                 </div>
