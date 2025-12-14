@@ -1,5 +1,6 @@
 
 import { db } from "@/db";
+export const dynamic = 'force-dynamic';
 import { books, bookCategories } from "@/db/schema";
 import { desc } from "drizzle-orm";
 import { BooksClient } from "./client";

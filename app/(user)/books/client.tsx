@@ -10,23 +10,31 @@ import {
     Download,
     User,
     Grid,
-    List
+    List,
+    Heart,
+    Loader2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
-import { BookWithCategory } from "@/app/actions/books";
+import { BookWithCategory, toggleBookSave } from "@/app/actions/books";
 import { bookCategories } from "@/db/schema";
+import { toast } from "sonner";
+import { useAuth } from "@clerk/nextjs";
 
 type Category = typeof bookCategories.$inferSelect;
 
 interface BooksClientProps {
     initialBooks: BookWithCategory[];
     categories: Category[];
+    savedBookIds: string[];
 }
 
-export default function BooksClient({ initialBooks, categories }: BooksClientProps) {
+export default function BooksClient({ initialBooks, categories, savedBookIds: initialSavedBookIds }: BooksClientProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
+    const { userId } = useAuth();
+    const [savedBooks, setSavedBooks] = useState<Set<string>>(new Set(initialSavedBookIds));
+    const [savingId, setSavingId] = useState<string | null>(null);
 
     // transform categories for easier lookup
     const categoryLabels = categories.reduce((acc, cat) => {
@@ -65,17 +73,42 @@ export default function BooksClient({ initialBooks, categories }: BooksClientPro
         updateUrl(categoryId, searchQuery);
     };
 
+    const handleSave = async (e: React.MouseEvent, bookId: string) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!userId) {
+            toast.error("Please login to save books");
+            router.push("/sign-in");
+            return;
+        }
+
+        if (savingId) return;
+
+        setSavingId(bookId);
+        try {
+            const result = await toggleBookSave(bookId);
+            setSavedBooks(prev => {
+                const next = new Set(prev);
+                if (result.saved) {
+                    next.add(bookId);
+                    toast.success("Book saved");
+                } else {
+                    next.delete(bookId);
+                    toast.success("Book removed from saved");
+                }
+                return next;
+            });
+        } catch (error) {
+            toast.error("Failed to update save status");
+        } finally {
+            setSavingId(null);
+        }
+    };
+
     const categoryList = [
         { id: "all", label: "All Books" },
-        ...categories.map(c => ({ id: c.id, label: c.name })) // Using ID for filtering in DB, but UI might want slugs? 
-        // The previous code used IDs like "job-books" which look like slugs. 
-        // My schema has both ID (uuid) and Slug. 
-        // To keep it simple and consistent with how I wrote the getBooks action (which expects categoryId), I should use ID.
-        // However, standard practiced is to use slugs in URL.
-        // For now, let's stick to ID to ensure it matches the DB query exactly without extra lookup, 
-        // OR I can change the action to look up by slug. 
-        // The action `getBooks` takes `categoryId`. I'll stick to ID for now to be safe, or update action.
-        // Let's use ID for reliability.
+        ...categories.map(c => ({ id: c.id, label: c.name }))
     ];
 
     return (
@@ -171,102 +204,140 @@ export default function BooksClient({ initialBooks, categories }: BooksClientPro
                     {/* Grid View */}
                     {viewMode === "grid" ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                            {initialBooks.map((book, index) => (
-                                <div
-                                    key={book.id}
-                                    className="group bg-card rounded-2xl border border-border overflow-hidden hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300"
-                                    style={{ animationDelay: `${index * 0.05}s` }}
-                                >
-                                    {/* Thumbnail */}
-                                    <div className="relative aspect-[4/3] overflow-hidden">
-                                        <img
-                                            src={book.thumbnailUrl || "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=300&fit=crop"}
-                                            alt={book.title}
-                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                                        <Badge className="absolute top-3 left-3 bg-white hover:bg-primary text-black">
-                                            {book.category.name}
-                                        </Badge>
-                                    </div>
+                            {initialBooks.map((book, index) => {
+                                const isSaved = savedBooks.has(book.id);
+                                const isSaving = savingId === book.id;
 
-                                    {/* Content */}
-                                    <div className="p-5">
-                                        <h3 className="font-semibold text-lg mb-2 line-clamp-2 group-hover:text-primary transition-colors">
-                                            {book.title}
-                                        </h3>
-                                        <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-                                            {book.description}
-                                        </p>
-                                        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-                                            <User className="h-4 w-4" />
-                                            <span>Admin</span>
-                                            <span className="text-border">•</span>
-                                            <Download className="h-4 w-4" />
-                                            <span>0</span>
+                                return (
+                                    <div
+                                        key={book.id}
+                                        className="group bg-card rounded-2xl border border-border overflow-hidden hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300 relative"
+                                        style={{ animationDelay: `${index * 0.05}s` }}
+                                    >
+                                        {/* Thumbnail */}
+                                        <div className="relative aspect-[4/3] overflow-hidden">
+                                            <img
+                                                src={book.thumbnailUrl || "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=300&fit=crop"}
+                                                alt={book.title}
+                                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                            <Badge className="absolute top-3 left-3 bg-white hover:bg-primary text-black">
+                                                {book.category.name}
+                                            </Badge>
+                                            <Button
+                                                size="icon"
+                                                variant="ghost"
+                                                className="absolute top-3 right-3 h-8 w-8 bg-white/80 backdrop-blur-sm hover:bg-white text-black rounded-full"
+                                                onClick={(e) => handleSave(e, book.id)}
+                                                disabled={isSaving}
+                                            >
+                                                {isSaving ? (
+                                                    <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                                                ) : (
+                                                    <Heart className={cn("h-4 w-4 transition-colors", isSaved ? "fill-red-500 text-red-500" : "text-black")} />
+                                                )}
+                                            </Button>
                                         </div>
-                                        <Button variant="secondary" size="sm" className="w-full gap-2" asChild>
-                                            <a href={book.fileUrl} target="_blank" rel="noopener noreferrer">
+
+                                        {/* Content */}
+                                        <div className="p-5">
+                                            <h3 className="font-semibold text-lg mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                                                {book.title}
+                                            </h3>
+                                            <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+                                                {book.description}
+                                            </p>
+                                            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
+                                                <User className="h-4 w-4" />
+                                                <span>Admin</span>
+                                                <span className="text-border">•</span>
                                                 <Download className="h-4 w-4" />
-                                                Download
-                                            </a>
-                                        </Button>
+                                                <span>0</span>
+                                            </div>
+                                            <Button variant="secondary" size="sm" className="w-full gap-2" asChild>
+                                                <a href={book.fileUrl} target="_blank" rel="noopener noreferrer">
+                                                    <Download className="h-4 w-4" />
+                                                    Download
+                                                </a>
+                                            </Button>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                )
+                            })}
                         </div>
                     ) : (
                         /* List View */
                         <div className="space-y-4">
-                            {initialBooks.map((book, index) => (
-                                <div
-                                    key={book.id}
-                                    className="group bg-card rounded-2xl border border-border p-4 sm:p-6 hover:shadow-lg hover:shadow-primary/10 hover:border-primary/30 transition-all duration-300 flex flex-col sm:flex-row gap-4 sm:gap-6"
-                                    style={{ animationDelay: `${index * 0.05}s` }}
-                                >
-                                    {/* Thumbnail */}
-                                    <div className="relative w-full sm:w-40 aspect-[4/3] sm:aspect-square rounded-xl overflow-hidden shrink-0">
-                                        <img
-                                            src={book.thumbnailUrl || "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=300&fit=crop"}
-                                            alt={book.title}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    </div>
+                            {initialBooks.map((book, index) => {
+                                const isSaved = savedBooks.has(book.id);
+                                const isSaving = savingId === book.id;
 
-                                    {/* Content */}
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-start justify-between gap-4 mb-2">
-                                            <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
-                                                {book.title}
-                                            </h3>
-                                            <Badge>{book.category.name}</Badge>
-                                        </div>
-                                        <p className="text-muted-foreground mb-4 line-clamp-2">
-                                            {book.description}
-                                        </p>
-                                        <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                                            <div className="flex items-center gap-1.5">
-                                                <User className="h-4 w-4" />
-                                                <span>Admin</span>
-                                            </div>
-                                            <div className="flex items-center gap-1.5">
-                                                <Download className="h-4 w-4" />
-                                                <span>0 downloads</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Action */}
-                                    <div className="shrink-0 self-end sm:self-center">
-                                        <Button className="gap-2" asChild>
-                                            <a href={book.fileUrl} target="_blank" rel="noopener noreferrer">
-                                                <Download className="h-4 w-4" />
-                                                Download
-                                            </a>
+                                return (
+                                    <div
+                                        key={book.id}
+                                        className="group bg-card rounded-2xl border border-border p-4 sm:p-6 hover:shadow-lg hover:shadow-primary/10 hover:border-primary/30 transition-all duration-300 flex flex-col sm:flex-row gap-4 sm:gap-6 relative"
+                                        style={{ animationDelay: `${index * 0.05}s` }}
+                                    >
+                                        {/* Save Button for List View */}
+                                        <Button
+                                            size="icon"
+                                            variant="ghost"
+                                            className="absolute top-4 right-4 h-8 w-8 text-muted-foreground hover:text-red-500"
+                                            onClick={(e) => handleSave(e, book.id)}
+                                            disabled={isSaving}
+                                        >
+                                            {isSaving ? (
+                                                <Loader2 className="h-4 w-4 animate-spin" />
+                                            ) : (
+                                                <Heart className={cn("h-4 w-4 transition-colors", isSaved ? "fill-red-500 text-red-500" : "")} />
+                                            )}
                                         </Button>
+
+                                        {/* Thumbnail */}
+                                        <div className="relative w-full sm:w-40 aspect-[4/3] sm:aspect-square rounded-xl overflow-hidden shrink-0">
+                                            <img
+                                                src={book.thumbnailUrl || "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=300&fit=crop"}
+                                                alt={book.title}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        </div>
+
+                                        {/* Content */}
+                                        <div className="flex-1 min-w-0 pr-8">
+                                            <div className="flex items-start justify-between gap-4 mb-2">
+                                                <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
+                                                    {book.title}
+                                                </h3>
+                                                <Badge>{book.category.name}</Badge>
+                                            </div>
+                                            <p className="text-muted-foreground mb-4 line-clamp-2">
+                                                {book.description}
+                                            </p>
+                                            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+                                                <div className="flex items-center gap-1.5">
+                                                    <User className="h-4 w-4" />
+                                                    <span>Admin</span>
+                                                </div>
+                                                <div className="flex items-center gap-1.5">
+                                                    <Download className="h-4 w-4" />
+                                                    <span>0 downloads</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Action */}
+                                        <div className="shrink-0 self-end sm:self-center">
+                                            <Button className="gap-2" asChild>
+                                                <a href={book.fileUrl} target="_blank" rel="noopener noreferrer">
+                                                    <Download className="h-4 w-4" />
+                                                    Download
+                                                </a>
+                                            </Button>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                )
+                            })}
                         </div>
                     )}
 

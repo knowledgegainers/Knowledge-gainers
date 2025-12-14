@@ -1,5 +1,6 @@
 
 import { db } from "@/db";
+export const dynamic = 'force-dynamic';
 import { notificationTypes } from "@/db/schema";
 import { desc } from "drizzle-orm";
 import { NotificationTypesClient } from "./client";

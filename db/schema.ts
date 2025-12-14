@@ -101,10 +101,20 @@ export const savedNotifications = pgTable("saved_notifications", {
     pk: primaryKey({ columns: [table.userId, table.notificationId] }),
 }));
 
+// Saved Exam Papers (junction table)
+export const savedExamPapers = pgTable("saved_exam_papers", {
+    userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    paperId: uuid("paper_id").notNull().references(() => examPapers.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+    pk: primaryKey({ columns: [table.userId, table.paperId] }),
+}));
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
     savedBooks: many(savedBooks),
     savedNotifications: many(savedNotifications),
+    savedExamPapers: many(savedExamPapers),
 }));
 
 export const bookCategoriesRelations = relations(bookCategories, ({ many }) => ({
@@ -123,11 +133,12 @@ export const examTypesRelations = relations(examTypes, ({ many }) => ({
     papers: many(examPapers),
 }));
 
-export const examPapersRelations = relations(examPapers, ({ one }) => ({
+export const examPapersRelations = relations(examPapers, ({ one, many }) => ({
     type: one(examTypes, {
         fields: [examPapers.typeId],
         references: [examTypes.id],
     }),
+    savedBy: many(savedExamPapers),
 }));
 
 export const notificationTypesRelations = relations(notificationTypes, ({ many }) => ({
@@ -161,5 +172,16 @@ export const savedNotificationsRelations = relations(savedNotifications, ({ one 
     notification: one(notifications, {
         fields: [savedNotifications.notificationId],
         references: [notifications.id],
+    }),
+}));
+
+export const savedExamPapersRelations = relations(savedExamPapers, ({ one }) => ({
+    user: one(users, {
+        fields: [savedExamPapers.userId],
+        references: [users.id],
+    }),
+    paper: one(examPapers, {
+        fields: [savedExamPapers.paperId],
+        references: [examPapers.id],
     }),
 }));

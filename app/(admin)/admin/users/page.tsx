@@ -1,5 +1,6 @@
 
 import { clerkClient } from "@clerk/nextjs/server";
+export const dynamic = 'force-dynamic';
 import { UsersClient } from "./client";
 
 export default async function UsersPage() {
