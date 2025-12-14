@@ -34,38 +34,7 @@
   --radius: 0.5rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Dark Mode Colors */
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
 
-    --card: 223 47% 14%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 223 47% 14%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 0 0% 100%;
-    --primary-foreground: 222 47% 11%;
-
-    --secondary: 222 47% 18%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 222 47% 18%;
-    --muted-foreground: 215 20% 65%;
-
-    --accent: 222 47% 18%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 222 47% 20%;
-    --input: 222 47% 20%;
-    --ring: 217 91% 60%;
-  }
-}
 
 @theme inline {
   --font-sans: var(--font-geist-sans);
@@ -90,11 +59,7 @@ body {
   -webkit-backdrop-filter: blur(10px);
 }
 
-@media (prefers-color-scheme: dark) {
-  .glass {
-    background: rgba(10, 10, 10, 0.7);
-  }
-}
+
 
 .gradient-hero {
   background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
