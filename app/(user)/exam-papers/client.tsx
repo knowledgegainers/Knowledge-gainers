@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -18,127 +18,18 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ExamPaperWithType } from "@/app/actions/exam-papers";
+import { examTypes } from "@/db/schema";
 
-const examTypes = [
-    { id: "all", label: "All Exams" },
-    { id: "polycet", label: "Polycet" },
-    { id: "10th", label: "10th Class" },
-    { id: "12th", label: "12th Class" },
-    { id: "ecet", label: "ECET" },
-    { id: "eamcet", label: "EAMCET" },
-    { id: "job-exams", label: "Job Exams" },
-];
+type ExamType = typeof examTypes.$inferSelect;
+
+interface ExamPapersClientProps {
+    initialPapers: ExamPaperWithType[];
+    types: ExamType[];
+}
 
 const years = ["2024", "2023", "2022", "2021", "2020"];
-
-// Mock data
-const examPapers = [
-    {
-        id: 1,
-        title: "EAMCET Engineering Full Paper",
-        examType: "eamcet",
-        year: "2024",
-        subject: "Engineering",
-        downloads: 3200,
-    },
-    {
-        id: 2,
-        title: "Polycet Previous Year Paper",
-        examType: "polycet",
-        year: "2024",
-        subject: "All Subjects",
-        downloads: 1890,
-    },
-    {
-        id: 3,
-        title: "SSC CGL Tier 1 Paper",
-        examType: "job-exams",
-        year: "2024",
-        subject: "General",
-        downloads: 4500,
-    },
-    {
-        id: 4,
-        title: "10th Board Mathematics",
-        examType: "10th",
-        year: "2024",
-        subject: "Mathematics",
-        downloads: 2100,
-    },
-    {
-        id: 5,
-        title: "ECET Engineering Paper",
-        examType: "ecet",
-        year: "2024",
-        subject: "Engineering",
-        downloads: 1650,
-    },
-    {
-        id: 6,
-        title: "12th Board Physics",
-        examType: "12th",
-        year: "2024",
-        subject: "Physics",
-        downloads: 2800,
-    },
-    {
-        id: 7,
-        title: "EAMCET Medical Paper",
-        examType: "eamcet",
-        year: "2023",
-        subject: "Medical",
-        downloads: 2100,
-    },
-    {
-        id: 8,
-        title: "Railway NTPC Paper",
-        examType: "job-exams",
-        year: "2023",
-        subject: "General",
-        downloads: 3800,
-    },
-    {
-        id: 9,
-        title: "10th Board Science",
-        examType: "10th",
-        year: "2023",
-        subject: "Science",
-        downloads: 1950,
-    },
-    {
-        id: 10,
-        title: "12th Board Chemistry",
-        examType: "12th",
-        year: "2023",
-        subject: "Chemistry",
-        downloads: 2300,
-    },
-    {
-        id: 11,
-        title: "Polycet Model Paper",
-        examType: "polycet",
-        year: "2023",
-        subject: "All Subjects",
-        downloads: 1450,
-    },
-    {
-        id: 12,
-        title: "ECET Previous Year",
-        examType: "ecet",
-        year: "2023",
-        subject: "Engineering",
-        downloads: 1200,
-    },
-];
-
-const examTypeLabels: Record<string, string> = {
-    "polycet": "Polycet",
-    "10th": "10th Class",
-    "12th": "12th Class",
-    "ecet": "ECET",
-    "eamcet": "EAMCET",
-    "job-exams": "Job Exams",
-};
 
 const examTypeColors: Record<string, string> = {
     "eamcet": "bg-blue-500/10 text-blue-600 border-blue-200",
@@ -149,18 +40,50 @@ const examTypeColors: Record<string, string> = {
     "ecet": "bg-cyan-500/10 text-cyan-600 border-cyan-200",
 };
 
-export default function ExamPapersPage() {
-    const [selectedExamType, setSelectedExamType] = useState("all");
-    const [selectedYear, setSelectedYear] = useState("all");
-    const [searchQuery, setSearchQuery] = useState("");
+export default function ExamPapersClient({ initialPapers, types }: ExamPapersClientProps) {
+    const router = useRouter();
+    const searchParams = useSearchParams();
 
-    const filteredPapers = examPapers.filter((paper) => {
-        const matchesType = selectedExamType === "all" || paper.examType === selectedExamType;
-        const matchesYear = selectedYear === "all" || paper.year === selectedYear;
-        const matchesSearch = paper.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            paper.subject.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesType && matchesYear && matchesSearch;
-    });
+    const initialType = searchParams.get("typeId") || "all";
+    const initialYear = searchParams.get("year") || "all";
+    const initialQuery = searchParams.get("query") || "";
+
+    const [selectedExamType, setSelectedExamType] = useState(initialType);
+    const [selectedYear, setSelectedYear] = useState(initialYear);
+    const [searchQuery, setSearchQuery] = useState(initialQuery);
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            if (searchQuery !== initialQuery) {
+                updateUrl(selectedExamType, selectedYear, searchQuery);
+            }
+        }, 500);
+
+        return () => clearTimeout(handler);
+    }, [searchQuery]);
+
+    const updateUrl = (typeId: string, year: string, query: string) => {
+        const params = new URLSearchParams();
+        if (typeId && typeId !== "all") params.set("typeId", typeId);
+        if (year && year !== "all") params.set("year", year);
+        if (query) params.set("query", query);
+        router.push(`/exam-papers?${params.toString()}`);
+    };
+
+    const handleTypeChange = (typeId: string) => {
+        setSelectedExamType(typeId);
+        updateUrl(typeId, selectedYear, searchQuery);
+    };
+
+    const handleYearChange = (year: string) => {
+        setSelectedYear(year);
+        updateUrl(selectedExamType, year, searchQuery);
+    };
+
+    const typeList = [
+        { id: "all", label: "All Exams" },
+        ...types.map(t => ({ id: t.id, label: t.name, slug: t.slug }))
+    ];
 
     return (
         <div className="min-h-screen">
@@ -192,12 +115,12 @@ export default function ExamPapersPage() {
                     <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
                         {/* Exam Type Filters */}
                         <div className="flex items-center gap-2 overflow-x-auto pb-2 lg:pb-0 w-full lg:w-auto">
-                            {examTypes.map((type) => (
+                            {typeList.map((type) => (
                                 <Button
                                     key={type.id}
                                     variant={selectedExamType === type.id ? "default" : "outline"}
                                     size="sm"
-                                    onClick={() => setSelectedExamType(type.id)}
+                                    onClick={() => handleTypeChange(type.id)}
                                     className="whitespace-nowrap"
                                 >
                                     {type.label}
@@ -216,7 +139,7 @@ export default function ExamPapersPage() {
                                     className="pl-10 text-black"
                                 />
                             </div>
-                            <Select value={selectedYear} onValueChange={setSelectedYear}>
+                            <Select value={selectedYear} onValueChange={handleYearChange}>
                                 <SelectTrigger className="w-32 text-black bg-white">
                                     <SelectValue placeholder="Year" />
                                 </SelectTrigger>
@@ -238,14 +161,14 @@ export default function ExamPapersPage() {
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Results Count */}
                     <p className="text-sm text-muted-foreground mb-6">
-                        Showing {filteredPapers.length} {filteredPapers.length === 1 ? 'paper' : 'papers'}
-                        {selectedExamType !== "all" && ` for ${examTypeLabels[selectedExamType]}`}
+                        Showing {initialPapers.length} {initialPapers.length === 1 ? 'paper' : 'papers'}
+                        {selectedExamType !== "all" && ` for ${typeList.find(t => t.id === selectedExamType)?.label || 'Type'}`}
                         {selectedYear !== "all" && ` from ${selectedYear}`}
                     </p>
 
                     {/* Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {filteredPapers.map((paper, index) => (
+                        {initialPapers.map((paper, index) => (
                             <div
                                 key={paper.id}
                                 className="group bg-card rounded-2xl border border-border p-6 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300"
@@ -256,8 +179,9 @@ export default function ExamPapersPage() {
                                     <div className="p-3 rounded-xl bg-primary/10">
                                         <FileText className="h-6 w-6 text-primary" />
                                     </div>
-                                    <Badge className={examTypeColors[paper.examType] || "bg-secondary"}>
-                                        {examTypeLabels[paper.examType]}
+                                    {/* Handle dynamic coloring logic if needed, falling back to slug or just random */}
+                                    <Badge className={examTypeColors[paper.type.slug] || "bg-secondary"}>
+                                        {paper.type.name}
                                     </Badge>
                                 </div>
 
@@ -266,7 +190,7 @@ export default function ExamPapersPage() {
                                     {paper.title}
                                 </h3>
                                 <p className="text-sm text-muted-foreground mb-4">
-                                    Subject: {paper.subject}
+                                    {paper.description}
                                 </p>
 
                                 <div className="flex items-center gap-4 text-sm text-muted-foreground mb-5">
@@ -276,20 +200,22 @@ export default function ExamPapersPage() {
                                     </div>
                                     <div className="flex items-center gap-1.5">
                                         <Download className="h-4 w-4 text-black" />
-                                        <span>{paper.downloads.toLocaleString()}</span>
+                                        <span>0</span>
                                     </div>
                                 </div>
 
-                                <Button variant="secondary" size="sm" className="w-full gap-2 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors">
-                                    <Download className="h-4 w-4" />
-                                    Download Paper
+                                <Button variant="secondary" size="sm" className="w-full gap-2 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors" asChild>
+                                    <a href={paper.fileUrl} target="_blank" rel="noopener noreferrer">
+                                        <Download className="h-4 w-4" />
+                                        Download Paper
+                                    </a>
                                 </Button>
                             </div>
                         ))}
                     </div>
 
                     {/* Empty State */}
-                    {filteredPapers.length === 0 && (
+                    {initialPapers.length === 0 && (
                         <div className="text-center py-16">
                             <FileText className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
                             <h3 className="text-xl font-semibold mb-2">No papers found</h3>

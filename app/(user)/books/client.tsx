@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -10,116 +9,74 @@ import {
     Search,
     Download,
     User,
-    Upload,
     Grid,
     List
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useRouter, useSearchParams } from "next/navigation";
+import { BookWithCategory } from "@/app/actions/books";
+import { bookCategories } from "@/db/schema";
 
-const categories = [
-    { id: "all", label: "All Books" },
-    { id: "job-books", label: "Job Books" },
-    { id: "current-affairs", label: "Current Affairs" },
-    { id: "gk", label: "General Knowledge" },
-    { id: "engineering", label: "Engineering" },
-    { id: "history", label: "History" },
-];
+type Category = typeof bookCategories.$inferSelect;
 
-// Mock data - will be replaced with real data from database
-const books = [
-    {
-        id: 1,
-        title: "Complete Guide to EAMCET Engineering",
-        category: "engineering",
-        thumbnail: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=300&fit=crop",
-        uploadedBy: "Admin",
-        downloads: 1250,
-        description: "Comprehensive guide covering all EAMCET engineering topics with solved examples.",
-    },
-    {
-        id: 2,
-        title: "General Knowledge Encyclopedia 2024",
-        category: "gk",
-        thumbnail: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=300&fit=crop",
-        uploadedBy: "Contributor",
-        downloads: 890,
-        description: "Complete GK book covering all important topics for competitive exams.",
-    },
-    {
-        id: 3,
-        title: "Current Affairs Monthly Digest",
-        category: "current-affairs",
-        thumbnail: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=400&h=300&fit=crop",
-        uploadedBy: "Admin",
-        downloads: 2100,
-        description: "Monthly compilation of current affairs for all competitive examinations.",
-    },
-    {
-        id: 4,
-        title: "SSC CGL Complete Preparation Guide",
-        category: "job-books",
-        thumbnail: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400&h=300&fit=crop",
-        uploadedBy: "Contributor",
-        downloads: 1560,
-        description: "All-in-one guide for SSC CGL preparation with previous year questions.",
-    },
-    {
-        id: 5,
-        title: "Indian History for Competitive Exams",
-        category: "history",
-        thumbnail: "https://images.unsplash.com/photo-1461360370896-922624d12a74?w=400&h=300&fit=crop",
-        uploadedBy: "Admin",
-        downloads: 980,
-        description: "Detailed coverage of Indian history from ancient to modern times.",
-    },
-    {
-        id: 6,
-        title: "Railway NTPC Complete Guide",
-        category: "job-books",
-        thumbnail: "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=400&h=300&fit=crop",
-        uploadedBy: "Contributor",
-        downloads: 1340,
-        description: "Comprehensive preparation material for Railway NTPC examination.",
-    },
-    {
-        id: 7,
-        title: "Physics for Engineering Entrance",
-        category: "engineering",
-        thumbnail: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=400&h=300&fit=crop",
-        uploadedBy: "Admin",
-        downloads: 1120,
-        description: "Complete physics guide with problems and solutions for JEE/EAMCET.",
-    },
-    {
-        id: 8,
-        title: "World Geography Handbook",
-        category: "gk",
-        thumbnail: "https://images.unsplash.com/photo-1524661135-423995f22d0b?w=400&h=300&fit=crop",
-        uploadedBy: "Contributor",
-        downloads: 760,
-        description: "Comprehensive world geography for UPSC and other competitive exams.",
-    },
-];
+interface BooksClientProps {
+    initialBooks: BookWithCategory[];
+    categories: Category[];
+}
 
-const categoryLabels: Record<string, string> = {
-    "job-books": "Job Books",
-    "current-affairs": "Current Affairs",
-    "gk": "General Knowledge",
-    "engineering": "Engineering",
-    "history": "History",
-};
+export default function BooksClient({ initialBooks, categories }: BooksClientProps) {
+    const router = useRouter();
+    const searchParams = useSearchParams();
 
-export default function BooksPage() {
-    const [selectedCategory, setSelectedCategory] = useState("all");
-    const [searchQuery, setSearchQuery] = useState("");
+    // transform categories for easier lookup
+    const categoryLabels = categories.reduce((acc, cat) => {
+        acc[cat.slug] = cat.name;
+        return acc;
+    }, {} as Record<string, string>);
+
+    // Get initial state from URL
+    const initialCategory = searchParams.get("category") || "all";
+    const initialQuery = searchParams.get("query") || "";
+
+    const [selectedCategory, setSelectedCategory] = useState(initialCategory);
+    const [searchQuery, setSearchQuery] = useState(initialQuery);
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
-    const filteredBooks = books.filter((book) => {
-        const matchesCategory = selectedCategory === "all" || book.category === selectedCategory;
-        const matchesSearch = book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            book.description.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesCategory && matchesSearch;
-    });
+    // Debounce search update
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            if (searchQuery !== initialQuery) {
+                updateUrl(selectedCategory, searchQuery);
+            }
+        }, 500);
+
+        return () => clearTimeout(handler);
+    }, [searchQuery]);
+
+    const updateUrl = (category: string, query: string) => {
+        const params = new URLSearchParams();
+        if (category && category !== "all") params.set("category", category);
+        if (query) params.set("query", query);
+        router.push(`/books?${params.toString()}`);
+    };
+
+    const handleCategoryChange = (categoryId: string) => {
+        setSelectedCategory(categoryId);
+        updateUrl(categoryId, searchQuery);
+    };
+
+    const categoryList = [
+        { id: "all", label: "All Books" },
+        ...categories.map(c => ({ id: c.id, label: c.name })) // Using ID for filtering in DB, but UI might want slugs? 
+        // The previous code used IDs like "job-books" which look like slugs. 
+        // My schema has both ID (uuid) and Slug. 
+        // To keep it simple and consistent with how I wrote the getBooks action (which expects categoryId), I should use ID.
+        // However, standard practiced is to use slugs in URL.
+        // For now, let's stick to ID to ensure it matches the DB query exactly without extra lookup, 
+        // OR I can change the action to look up by slug. 
+        // The action `getBooks` takes `categoryId`. I'll stick to ID for now to be safe, or update action.
+        // Let's use ID for reliability.
+    ];
 
     return (
         <div className="min-h-screen">
@@ -151,12 +108,12 @@ export default function BooksPage() {
                     <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
                         {/* Categories */}
                         <div className="flex items-center gap-2 overflow-x-auto  pb-2 lg:pb-0 w-full lg:w-auto">
-                            {categories.map((category) => (
+                            {categoryList.map((category) => (
                                 <Button
                                     key={category.id}
                                     variant={selectedCategory === category.id ? "default" : "outline"}
                                     size="sm"
-                                    onClick={() => setSelectedCategory(category.id)}
+                                    onClick={() => handleCategoryChange(category.id)}
                                     className="whitespace-nowrap"
                                 >
                                     {category.label}
@@ -207,14 +164,14 @@ export default function BooksPage() {
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Results Count */}
                     <p className="text-sm text-muted-foreground mb-6">
-                        Showing {filteredBooks.length} {filteredBooks.length === 1 ? 'book' : 'books'}
-                        {selectedCategory !== "all" && ` in ${categoryLabels[selectedCategory]}`}
+                        Showing {initialBooks.length} {initialBooks.length === 1 ? 'book' : 'books'}
+                        {selectedCategory !== "all" && ` in ${categoryList.find(c => c.id === selectedCategory)?.label || 'Category'}`}
                     </p>
 
                     {/* Grid View */}
                     {viewMode === "grid" ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                            {filteredBooks.map((book, index) => (
+                            {initialBooks.map((book, index) => (
                                 <div
                                     key={book.id}
                                     className="group bg-card rounded-2xl border border-border overflow-hidden hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300"
@@ -223,13 +180,13 @@ export default function BooksPage() {
                                     {/* Thumbnail */}
                                     <div className="relative aspect-[4/3] overflow-hidden">
                                         <img
-                                            src={book.thumbnail}
+                                            src={book.thumbnailUrl || "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=300&fit=crop"}
                                             alt={book.title}
                                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                                         <Badge className="absolute top-3 left-3 bg-white hover:bg-primary text-black">
-                                            {categoryLabels[book.category]}
+                                            {book.category.name}
                                         </Badge>
                                     </div>
 
@@ -243,14 +200,16 @@ export default function BooksPage() {
                                         </p>
                                         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
                                             <User className="h-4 w-4" />
-                                            <span>{book.uploadedBy}</span>
+                                            <span>Admin</span>
                                             <span className="text-border">•</span>
                                             <Download className="h-4 w-4" />
-                                            <span>{book.downloads.toLocaleString()}</span>
+                                            <span>0</span>
                                         </div>
-                                        <Button variant="secondary" size="sm" className="w-full gap-2">
-                                            <Download className="h-4 w-4" />
-                                            Download
+                                        <Button variant="secondary" size="sm" className="w-full gap-2" asChild>
+                                            <a href={book.fileUrl} target="_blank" rel="noopener noreferrer">
+                                                <Download className="h-4 w-4" />
+                                                Download
+                                            </a>
                                         </Button>
                                     </div>
                                 </div>
@@ -259,7 +218,7 @@ export default function BooksPage() {
                     ) : (
                         /* List View */
                         <div className="space-y-4">
-                            {filteredBooks.map((book, index) => (
+                            {initialBooks.map((book, index) => (
                                 <div
                                     key={book.id}
                                     className="group bg-card rounded-2xl border border-border p-4 sm:p-6 hover:shadow-lg hover:shadow-primary/10 hover:border-primary/30 transition-all duration-300 flex flex-col sm:flex-row gap-4 sm:gap-6"
@@ -268,7 +227,7 @@ export default function BooksPage() {
                                     {/* Thumbnail */}
                                     <div className="relative w-full sm:w-40 aspect-[4/3] sm:aspect-square rounded-xl overflow-hidden shrink-0">
                                         <img
-                                            src={book.thumbnail}
+                                            src={book.thumbnailUrl || "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=300&fit=crop"}
                                             alt={book.title}
                                             className="w-full h-full object-cover"
                                         />
@@ -280,7 +239,7 @@ export default function BooksPage() {
                                             <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
                                                 {book.title}
                                             </h3>
-                                            <Badge>{categoryLabels[book.category]}</Badge>
+                                            <Badge>{book.category.name}</Badge>
                                         </div>
                                         <p className="text-muted-foreground mb-4 line-clamp-2">
                                             {book.description}
@@ -288,20 +247,22 @@ export default function BooksPage() {
                                         <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                                             <div className="flex items-center gap-1.5">
                                                 <User className="h-4 w-4" />
-                                                <span>{book.uploadedBy}</span>
+                                                <span>Admin</span>
                                             </div>
                                             <div className="flex items-center gap-1.5">
                                                 <Download className="h-4 w-4" />
-                                                <span>{book.downloads.toLocaleString()} downloads</span>
+                                                <span>0 downloads</span>
                                             </div>
                                         </div>
                                     </div>
 
                                     {/* Action */}
                                     <div className="shrink-0 self-end sm:self-center">
-                                        <Button className="gap-2">
-                                            <Download className="h-4 w-4" />
-                                            Download
+                                        <Button className="gap-2" asChild>
+                                            <a href={book.fileUrl} target="_blank" rel="noopener noreferrer">
+                                                <Download className="h-4 w-4" />
+                                                Download
+                                            </a>
                                         </Button>
                                     </div>
                                 </div>
@@ -310,7 +271,7 @@ export default function BooksPage() {
                     )}
 
                     {/* Empty State */}
-                    {filteredBooks.length === 0 && (
+                    {initialBooks.length === 0 && (
                         <div className="text-center py-16">
                             <BookOpen className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
                             <h3 className="text-xl font-semibold mb-2">No books found</h3>

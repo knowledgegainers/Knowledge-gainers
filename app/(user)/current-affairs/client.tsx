@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -20,64 +20,22 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { useRouter, useSearchParams } from "next/navigation";
+import { currentAffairs } from "@/db/schema";
+
+type CurrentAffair = typeof currentAffairs.$inferSelect;
+
+interface CurrentAffairsClientProps {
+    initialPosts: CurrentAffair[];
+    categories: string[];
+}
 
 const months = [
     "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
 ];
 
-// Mock data
-const currentAffairsPosts = [
-    {
-        id: 1,
-        title: "India's G20 Presidency Achievements",
-        summary: "A comprehensive overview of India's successful G20 presidency, including key outcomes from the New Delhi Summit and global initiatives launched.",
-        date: "2024-01-15",
-        category: "International",
-        readTime: "5 min read",
-    },
-    {
-        id: 2,
-        title: "Union Budget 2024 Highlights",
-        summary: "Key announcements from the Union Budget 2024 including tax reforms, infrastructure spending, and social welfare schemes.",
-        date: "2024-02-01",
-        category: "Economy",
-        readTime: "8 min read",
-    },
-    {
-        id: 3,
-        title: "Chandrayaan-3 Mission Success",
-        summary: "ISRO's historic lunar mission achievements and India's position in space exploration. Complete analysis for competitive exams.",
-        date: "2024-01-20",
-        category: "Science & Tech",
-        readTime: "6 min read",
-    },
-    {
-        id: 4,
-        title: "New Education Policy Updates",
-        summary: "Latest developments in the implementation of NEP 2020, including changes in examination patterns and curriculum updates.",
-        date: "2024-01-25",
-        category: "Education",
-        readTime: "4 min read",
-    },
-    {
-        id: 5,
-        title: "Environmental Conservation Initiatives",
-        summary: "Government's new initiatives for environmental protection, including clean energy goals and forest conservation programs.",
-        date: "2024-02-05",
-        category: "Environment",
-        readTime: "5 min read",
-    },
-    {
-        id: 6,
-        title: "Digital India Achievements 2024",
-        summary: "Progress report on Digital India initiative, UPI transactions milestone, and upcoming digital infrastructure projects.",
-        date: "2024-02-10",
-        category: "Technology",
-        readTime: "4 min read",
-    },
-];
-
+// Keep static for now as no DB table exists for digests
 const monthlyDigests = [
     { month: "January 2024", downloadCount: 5600 },
     { month: "December 2023", downloadCount: 4800 },
@@ -94,23 +52,45 @@ const categoryColors: Record<string, string> = {
     "Technology": "bg-cyan-500/10 text-cyan-600 border-cyan-200",
 };
 
-function formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString('en-US', {
+function formatDate(date: Date): string {
+    return new Date(date).toLocaleDateString('en-US', {
         month: 'long',
         day: 'numeric',
         year: 'numeric'
     });
 }
 
-export default function CurrentAffairsPage() {
-    const [searchQuery, setSearchQuery] = useState("");
-    const [selectedMonth, setSelectedMonth] = useState("all");
+export default function CurrentAffairsClient({ initialPosts, categories }: CurrentAffairsClientProps) {
+    const router = useRouter();
+    const searchParams = useSearchParams();
 
-    const filteredPosts = currentAffairsPosts.filter((post) => {
-        const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            post.summary.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesSearch;
-    });
+    const initialMonth = searchParams.get("month") || "all";
+    const initialQuery = searchParams.get("query") || "";
+
+    const [searchQuery, setSearchQuery] = useState(initialQuery);
+    const [selectedMonth, setSelectedMonth] = useState(initialMonth);
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            if (searchQuery !== initialQuery) {
+                updateUrl(selectedMonth, searchQuery);
+            }
+        }, 500);
+
+        return () => clearTimeout(handler);
+    }, [searchQuery]);
+
+    const updateUrl = (month: string, query: string) => {
+        const params = new URLSearchParams();
+        if (month && month !== "all") params.set("month", month);
+        if (query) params.set("query", query);
+        router.push(`/current-affairs?${params.toString()}`);
+    };
+
+    const handleMonthChange = (value: string) => {
+        setSelectedMonth(value);
+        updateUrl(value, searchQuery);
+    };
 
     return (
         <div className="min-h-screen">
@@ -180,7 +160,7 @@ export default function CurrentAffairsPage() {
                                 className="pl-10"
                             />
                         </div>
-                        <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+                        <Select value={selectedMonth} onValueChange={handleMonthChange}>
                             <SelectTrigger className="w-40">
                                 <SelectValue placeholder="Filter by month" />
                             </SelectTrigger>
@@ -204,7 +184,7 @@ export default function CurrentAffairsPage() {
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        {filteredPosts.map((post, index) => (
+                        {initialPosts.map((post, index) => (
                             <div
                                 key={post.id}
                                 className="group bg-card rounded-2xl border border-border p-6 hover:shadow-lg hover:shadow-primary/10 hover:border-primary/30 transition-all duration-300"
@@ -214,7 +194,7 @@ export default function CurrentAffairsPage() {
                                     <Badge className={categoryColors[post.category] || "bg-secondary"}>
                                         {post.category}
                                     </Badge>
-                                    <span className="text-sm text-muted-foreground">{post.readTime}</span>
+                                    {/* Read time not in DB, removed or mocked if needed. Removed from display or use constant. */}
                                 </div>
 
                                 <h3 className="font-semibold text-xl mb-3 group-hover:text-primary transition-colors">
@@ -222,7 +202,7 @@ export default function CurrentAffairsPage() {
                                 </h3>
 
                                 <p className="text-muted-foreground mb-4 line-clamp-2">
-                                    {post.summary}
+                                    {post.content}
                                 </p>
 
                                 <div className="flex items-center justify-between">
@@ -240,7 +220,7 @@ export default function CurrentAffairsPage() {
                     </div>
 
                     {/* Empty State */}
-                    {filteredPosts.length === 0 && (
+                    {initialPosts.length === 0 && (
                         <div className="text-center py-16">
                             <Newspaper className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
                             <h3 className="text-xl font-semibold mb-2">No articles found</h3>

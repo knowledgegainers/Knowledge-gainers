@@ -1,31 +1,35 @@
 import { pgTable, text, timestamp, integer, pgEnum, uuid, primaryKey } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
-// Enums
-export const bookCategoryEnum = pgEnum("book_category", [
-    "job_books",
-    "current_affairs",
-    "general_knowledge",
-    "engineering",
-    "history",
-]);
+// Book Categories table
+export const bookCategories = pgTable("book_categories", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    name: text("name").notNull().unique(),
+    slug: text("slug").notNull().unique(),
+    description: text("description"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
 
-export const examTypeEnum = pgEnum("exam_type", [
-    "polycet",
-    "tenth",
-    "twelfth",
-    "ecet",
-    "eamcet",
-    "job_exams",
-]);
+// Exam Types table
+export const examTypes = pgTable("exam_types", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    name: text("name").notNull().unique(),
+    slug: text("slug").notNull().unique(),
+    description: text("description"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
 
-export const notificationTypeEnum = pgEnum("notification_type", [
-    "exam",
-    "job",
-    "application",
-    "requirement",
-    "other",
-]);
+// Notification Types table
+export const notificationTypes = pgTable("notification_types", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    name: text("name").notNull().unique(),
+    slug: text("slug").notNull().unique(),
+    description: text("description"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
 
 // Users table
 export const users = pgTable("users", {
@@ -39,7 +43,7 @@ export const users = pgTable("users", {
 export const books = pgTable("books", {
     id: uuid("id").primaryKey().defaultRandom(),
     title: text("title").notNull(),
-    category: bookCategoryEnum("category").notNull(),
+    categoryId: uuid("category_id").notNull().references(() => bookCategories.id, { onDelete: "cascade" }),
     description: text("description"),
     fileUrl: text("file_url").notNull(),
     thumbnailUrl: text("thumbnail_url"),
@@ -50,7 +54,7 @@ export const books = pgTable("books", {
 export const examPapers = pgTable("exam_papers", {
     id: uuid("id").primaryKey().defaultRandom(),
     title: text("title").notNull(),
-    examType: examTypeEnum("exam_type").notNull(),
+    typeId: uuid("type_id").notNull().references(() => examTypes.id, { onDelete: "cascade" }),
     year: integer("year").notNull(),
     description: text("description"),
     fileUrl: text("file_url").notNull(),
@@ -62,7 +66,7 @@ export const notifications = pgTable("notifications", {
     id: uuid("id").primaryKey().defaultRandom(),
     title: text("title").notNull(),
     description: text("description").notNull(),
-    type: notificationTypeEnum("type").notNull(),
+    typeId: uuid("type_id").notNull().references(() => notificationTypes.id, { onDelete: "cascade" }),
     applyLink: text("apply_link"),
     expiryDate: timestamp("expiry_date"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -73,6 +77,7 @@ export const currentAffairs = pgTable("current_affairs", {
     id: uuid("id").primaryKey().defaultRandom(),
     title: text("title").notNull(),
     content: text("content").notNull(),
+    category: text("category").notNull().default("General"), // Added category column with default
     imageUrl: text("image_url"),
     date: timestamp("date").notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -102,11 +107,38 @@ export const usersRelations = relations(users, ({ many }) => ({
     savedNotifications: many(savedNotifications),
 }));
 
-export const booksRelations = relations(books, ({ many }) => ({
+export const bookCategoriesRelations = relations(bookCategories, ({ many }) => ({
+    books: many(books),
+}));
+
+export const booksRelations = relations(books, ({ one, many }) => ({
+    category: one(bookCategories, {
+        fields: [books.categoryId],
+        references: [bookCategories.id],
+    }),
     savedBy: many(savedBooks),
 }));
 
-export const notificationsRelations = relations(notifications, ({ many }) => ({
+export const examTypesRelations = relations(examTypes, ({ many }) => ({
+    papers: many(examPapers),
+}));
+
+export const examPapersRelations = relations(examPapers, ({ one }) => ({
+    type: one(examTypes, {
+        fields: [examPapers.typeId],
+        references: [examTypes.id],
+    }),
+}));
+
+export const notificationTypesRelations = relations(notificationTypes, ({ many }) => ({
+    notifications: many(notifications),
+}));
+
+export const notificationsRelations = relations(notifications, ({ one, many }) => ({
+    type: one(notificationTypes, {
+        fields: [notifications.typeId],
+        references: [notificationTypes.id],
+    }),
     savedBy: many(savedNotifications),
 }));
 
