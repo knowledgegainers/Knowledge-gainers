@@ -34,6 +34,16 @@ export async function getBooks(search?: string, categoryId?: string) {
     return data;
 }
 
+export async function getLatestBooks(limit: number = 4) {
+    return await db.query.books.findMany({
+        with: {
+            category: true,
+        },
+        orderBy: desc(books.createdAt),
+        limit: limit,
+    });
+}
+
 export async function getBookCategories() {
     return await db.select().from(bookCategories).orderBy(desc(bookCategories.createdAt));
 }

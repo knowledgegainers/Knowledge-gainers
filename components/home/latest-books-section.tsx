@@ -2,44 +2,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, Download, ArrowRight, User } from "lucide-react";
+import { getLatestBooks } from "@/app/actions/books";
 
-// Mock data - will be replaced with real data from database
-const latestBooks = [
-    {
-        id: 1,
-        title: "Complete Guide to EAMCET",
-        category: "Engineering",
-        thumbnail: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=300&fit=crop",
-        uploadedBy: "Admin",
-        downloads: 1250,
-    },
-    {
-        id: 2,
-        title: "General Knowledge 2024",
-        category: "General Knowledge",
-        thumbnail: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=300&fit=crop",
-        uploadedBy: "Contributor",
-        downloads: 890,
-    },
-    {
-        id: 3,
-        title: "Current Affairs Monthly",
-        category: "Current Affairs",
-        thumbnail: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=400&h=300&fit=crop",
-        uploadedBy: "Admin",
-        downloads: 2100,
-    },
-    {
-        id: 4,
-        title: "SSC CGL Complete Guide",
-        category: "Job Books",
-        thumbnail: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400&h=300&fit=crop",
-        uploadedBy: "Contributor",
-        downloads: 1560,
-    },
-];
+export async function LatestBooksSection() {
+    const latestBooks = await getLatestBooks(4);
 
-export function LatestBooksSection() {
     return (
         <section className="py-20 lg:py-28">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -73,13 +40,13 @@ export function LatestBooksSection() {
                             {/* Thumbnail */}
                             <div className="relative aspect-[4/3] overflow-hidden">
                                 <img
-                                    src={book.thumbnail}
+                                    src={book.thumbnailUrl || "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=300&fit=crop"}
                                     alt={book.title}
                                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                                 <Badge className="absolute top-3 left-3 bg-white text-black hover:bg-primary hover:text-white">
-                                    {book.category}
+                                    {book.category.name}
                                 </Badge>
                             </div>
 
@@ -90,14 +57,16 @@ export function LatestBooksSection() {
                                 </h3>
                                 <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
                                     <User className="h-4 w-4" />
-                                    <span>{book.uploadedBy}</span>
+                                    <span>Admin</span>
                                     <span className="text-border">•</span>
                                     <Download className="h-4 w-4" />
-                                    <span>{book.downloads.toLocaleString()}</span>
+                                    <span>PDF</span>
                                 </div>
-                                <Button variant="secondary" size="sm" className="w-full gap-2">
-                                    <Download className="h-4 w-4" />
-                                    Download
+                                <Button variant="secondary" size="sm" className="w-full gap-2" asChild>
+                                    <a href={book.fileUrl} target="_blank" rel="noopener noreferrer">
+                                        <Download className="h-4 w-4" />
+                                        Download
+                                    </a>
                                 </Button>
                             </div>
                         </div>

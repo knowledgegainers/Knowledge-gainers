@@ -34,6 +34,16 @@ export async function getNotifications(search?: string, typeId?: string) {
     return data;
 }
 
+export async function getLatestNotifications(limit: number = 4) {
+    return await db.query.notifications.findMany({
+        with: {
+            type: true,
+        },
+        orderBy: desc(notifications.createdAt),
+        limit: limit,
+    });
+}
+
 export async function getNotificationTypes() {
     return await db.select().from(notificationTypes).orderBy(desc(notificationTypes.createdAt));
 }

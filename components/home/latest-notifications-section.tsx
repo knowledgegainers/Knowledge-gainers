@@ -2,52 +2,20 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Bell, ArrowRight, Calendar, ExternalLink, Clock } from "lucide-react";
+import { getLatestNotifications } from "@/app/actions/notifications";
 
-// Mock data - will be replaced with real data from database
-const latestNotifications = [
-    {
-        id: 1,
-        title: "SSC CGL 2024 Notification Released",
-        description: "Staff Selection Commission has released the notification for Combined Graduate Level Examination 2024.",
-        type: "job",
-        lastDate: "2024-12-15",
-        applyLink: "#",
-    },
-    {
-        id: 2,
-        title: "EAMCET 2024 Registration Open",
-        description: "AP EAMCET 2024 online application process has started. Last date to apply with late fee is approaching.",
-        type: "exam",
-        lastDate: "2024-12-28",
-        applyLink: "#",
-    },
-    {
-        id: 3,
-        title: "Railway NTPC Recruitment 2024",
-        description: "RRB has announced recruitment for Non-Technical Popular Categories with over 10,000 vacancies.",
-        type: "job",
-        lastDate: "2024-12-20",
-        applyLink: "#",
-    },
-    {
-        id: 4,
-        title: "JEE Main 2025 Session 1",
-        description: "NTA has released the notification for JEE Main 2025 Session 1. Check eligibility and exam pattern.",
-        type: "exam",
-        lastDate: "2025-01-10",
-        applyLink: "#",
-    },
-];
-
-function getDaysRemaining(dateString: string): number {
-    const lastDate = new Date(dateString);
+function getDaysRemaining(date: Date | null): number {
+    if (!date) return 0;
+    const lastDate = new Date(date);
     const today = new Date();
     const diffTime = lastDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
 }
 
-export function LatestNotificationsSection() {
+export async function LatestNotificationsSection() {
+    const latestNotifications = await getLatestNotifications(4);
+
     return (
         <section className="py-20 lg:py-28">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -73,8 +41,9 @@ export function LatestNotificationsSection() {
                 {/* Notifications List */}
                 <div className="space-y-4">
                     {latestNotifications.map((notification, index) => {
-                        const daysRemaining = getDaysRemaining(notification.lastDate);
+                        const daysRemaining = getDaysRemaining(notification.expiryDate);
                         const isUrgent = daysRemaining <= 7 && daysRemaining > 0;
+                        const isJob = notification.type.slug.includes("job") || notification.type.name.toLowerCase().includes("job");
 
                         return (
                             <div
@@ -84,8 +53,8 @@ export function LatestNotificationsSection() {
                             >
                                 <div className="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6">
                                     {/* Icon */}
-                                    <div className={`shrink-0 p-4 rounded-xl ${notification.type === 'job' ? 'bg-green-500/10' : 'bg-blue-500/10'}`}>
-                                        <Bell className={`h-6 w-6 ${notification.type === 'job' ? 'text-green-600' : 'text-blue-600'}`} />
+                                    <div className={`shrink-0 p-4 rounded-xl ${isJob ? 'bg-green-500/10' : 'bg-blue-500/10'}`}>
+                                        <Bell className={`h-6 w-6 ${isJob ? 'text-green-600' : 'text-blue-600'}`} />
                                     </div>
 
                                     {/* Content */}
@@ -94,8 +63,8 @@ export function LatestNotificationsSection() {
                                             <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
                                                 {notification.title}
                                             </h3>
-                                            <Badge variant={notification.type === 'job' ? 'default' : 'secondary'}>
-                                                {notification.type === 'job' ? 'Job' : 'Exam'}
+                                            <Badge variant={isJob ? 'default' : 'secondary'}>
+                                                {notification.type.name}
                                             </Badge>
                                             {isUrgent && (
                                                 <Badge variant="destructive" className="animate-pulse">
@@ -109,22 +78,26 @@ export function LatestNotificationsSection() {
                                         <div className="flex flex-wrap items-center gap-4 text-sm">
                                             <div className="flex items-center gap-1.5 text-muted-foreground">
                                                 <Calendar className="h-4 w-4" />
-                                                <span>Last Date: {new Date(notification.lastDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                                                <span>Posted: {new Date(notification.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                                             </div>
-                                            <div className={`flex items-center gap-1.5 ${isUrgent ? 'text-destructive' : 'text-muted-foreground'}`}>
-                                                <Clock className="h-4 w-4" />
-                                                <span className={isUrgent ? 'font-medium' : ''}>
-                                                    {daysRemaining > 0 ? `${daysRemaining} days remaining` : 'Expired'}
-                                                </span>
-                                            </div>
+                                            {notification.expiryDate && (
+                                                <div className={`flex items-center gap-1.5 ${isUrgent ? 'text-destructive' : 'text-muted-foreground'}`}>
+                                                    <Clock className="h-4 w-4" />
+                                                    <span className={isUrgent ? 'font-medium' : ''}>
+                                                        {daysRemaining > 0 ? `${daysRemaining} days remaining` : 'Expired'}
+                                                    </span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
 
                                     {/* Action */}
                                     <div className="shrink-0">
-                                        <Button className="gap-2">
-                                            Apply Now
-                                            <ExternalLink className="h-4 w-4" />
+                                        <Button className="gap-2" asChild>
+                                            <a href={notification.applyLink || "#"} target="_blank" rel="noopener noreferrer">
+                                                Apply Now
+                                                <ExternalLink className="h-4 w-4" />
+                                            </a>
                                         </Button>
                                     </div>
                                 </div>

@@ -37,11 +37,11 @@ export const columns: ColumnDef<UserColumn>[] = [
     {
         accessorKey: "lastActiveAt",
         header: "Last Active",
-        cell: ({ row }) => row.original.lastActiveAt ? row.original.lastActiveAt.toLocaleDateString() : "Never",
+        cell: ({ row }) => row.original.lastActiveAt ? row.original.lastActiveAt.toLocaleDateString('en-US') : "Never",
     },
     {
         accessorKey: "createdAt",
         header: "Joined At",
-        cell: ({ row }) => row.original.createdAt.toLocaleDateString(),
+        cell: ({ row }) => row.original.createdAt.toLocaleDateString('en-US'),
     },
 ];

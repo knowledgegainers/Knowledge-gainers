@@ -35,6 +35,7 @@ export function Footer() {
     return (
         <footer className="bg-card border-t border-border">
             {/* Newsletter Section */}
+            {/*
             <div className="border-b border-border">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
                     <div className="max-w-2xl mx-auto text-center">
@@ -58,6 +59,7 @@ export function Footer() {
                     </div>
                 </div>
             </div>
+            */}
 
             {/* Main Footer */}
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">

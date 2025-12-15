@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -26,6 +26,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { ImageKitUpload } from "@/components/admin/imagekit-upload";
 
 const formSchema = z.object({
     title: z.string().min(1, "Title is required"),
@@ -42,6 +43,7 @@ interface CurrentAffairDialogProps {
 
 export function CurrentAffairDialog({ open, onOpenChange, initialData }: CurrentAffairDialogProps) {
     const router = useRouter();
+    const [imageMode, setImageMode] = useState<"upload" | "url">("upload");
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -134,19 +136,51 @@ export function CurrentAffairDialog({ open, onOpenChange, initialData }: Current
                                 </FormItem>
                             )}
                         />
-                        <FormField
-                            control={form.control}
-                            name="imageUrl"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Image URL (Optional)</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="https://example.com/image.jpg" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
+                        <div className="space-y-3">
+                            <div className="flex items-center justify-between">
+                                <label className="text-sm font-medium">Image (Optional)</label>
+                                <div className="flex gap-2">
+                                    <Button
+                                        type="button"
+                                        variant={imageMode === "upload" ? "default" : "outline"}
+                                        size="sm"
+                                        onClick={() => setImageMode("upload")}
+                                    >
+                                        Upload
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        variant={imageMode === "url" ? "default" : "outline"}
+                                        size="sm"
+                                        onClick={() => setImageMode("url")}
+                                    >
+                                        URL
+                                    </Button>
+                                </div>
+                            </div>
+
+                            {imageMode === "upload" ? (
+                                <ImageKitUpload
+                                    folder="/current-affairs"
+                                    currentImageUrl={form.watch("imageUrl")}
+                                    onUploadComplete={(url) => form.setValue("imageUrl", url)}
+                                    label=""
+                                />
+                            ) : (
+                                <FormField
+                                    control={form.control}
+                                    name="imageUrl"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                <Input placeholder="https://example.com/image.jpg" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
                             )}
-                        />
+                        </div>
                         <FormField
                             control={form.control}
                             name="content"

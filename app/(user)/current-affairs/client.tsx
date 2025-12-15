@@ -117,6 +117,8 @@ export default function CurrentAffairsClient({ initialPosts, categories }: Curre
             </section>
 
             {/* Monthly Digests */}
+            {/* TODO: Implement monthly digests 
+            
             <section className="py-8 bg-card border-y border-border">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between mb-6">
@@ -146,6 +148,7 @@ export default function CurrentAffairsClient({ initialPosts, categories }: Curre
                     </div>
                 </div>
             </section>
+            */}
 
             {/* Search */}
             <section className="py-8">
@@ -233,6 +236,7 @@ export default function CurrentAffairsClient({ initialPosts, categories }: Curre
             </section>
 
             {/* GK Quiz Section */}
+            {/*
             <section className="py-12 lg:py-16 bg-card">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="max-w-3xl mx-auto text-center">
@@ -254,6 +258,7 @@ export default function CurrentAffairsClient({ initialPosts, categories }: Curre
                     </div>
                 </div>
             </section>
+            */}
         </div>
     );
 }

@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { ImageKitUpload } from "@/components/admin/imagekit-upload";
 
 const formSchema = z.object({
     title: z.string().min(1, "Title is required"),
@@ -51,6 +52,7 @@ interface BookDialogProps {
 
 export function BookDialog({ open, onOpenChange, initialData, categories }: BookDialogProps) {
     const router = useRouter();
+    const [thumbnailMode, setThumbnailMode] = useState<"upload" | "url">("upload");
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -160,33 +162,63 @@ export function BookDialog({ open, onOpenChange, initialData, categories }: Book
                                 </FormItem>
                             )}
                         />
-                        <div className="grid grid-cols-2 gap-4">
-                            <FormField
-                                control={form.control}
-                                name="fileUrl"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>PDF URL</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="https://..." {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="thumbnailUrl"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Cover Image URL</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="https://..." {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                        <FormField
+                            control={form.control}
+                            name="fileUrl"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>PDF URL</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="https://..." {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <div className="space-y-3">
+                            <div className="flex items-center justify-between">
+                                <label className="text-sm font-medium">Cover Image</label>
+                                <div className="flex gap-2">
+                                    <Button
+                                        type="button"
+                                        variant={thumbnailMode === "upload" ? "default" : "outline"}
+                                        size="sm"
+                                        onClick={() => setThumbnailMode("upload")}
+                                    >
+                                        Upload
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        variant={thumbnailMode === "url" ? "default" : "outline"}
+                                        size="sm"
+                                        onClick={() => setThumbnailMode("url")}
+                                    >
+                                        URL
+                                    </Button>
+                                </div>
+                            </div>
+
+                            {thumbnailMode === "upload" ? (
+                                <ImageKitUpload
+                                    folder="/books"
+                                    currentImageUrl={form.watch("thumbnailUrl")}
+                                    onUploadComplete={(url) => form.setValue("thumbnailUrl", url)}
+                                    label=""
+                                />
+                            ) : (
+                                <FormField
+                                    control={form.control}
+                                    name="thumbnailUrl"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                <Input placeholder="https://..." {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            )}
                         </div>
                         <FormField
                             control={form.control}

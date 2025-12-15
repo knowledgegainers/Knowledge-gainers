@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import {
     BookOpen,
@@ -27,9 +27,46 @@ const navLinks = [
     { href: "/about", label: "About", icon: null },
 ];
 
+// Admin Button Component - Only shows for admin user
+function AdminButton() {
+    const { user } = useUser();
+    const adminUserId = process.env.NEXT_PUBLIC_ADMIN_USER_ID;
+
+    if (user?.id !== adminUserId) {
+        return null;
+    }
+
+    return (
+        <Link href="/admin">
+            <Button variant="ghost" size="sm">
+                Admin
+            </Button>
+        </Link>
+    );
+}
+
+// Mobile Admin Button Component - Only shows for admin user
+function MobileAdminButton({ onClick }: { onClick: () => void }) {
+    const { user } = useUser();
+    const adminUserId = process.env.NEXT_PUBLIC_ADMIN_USER_ID;
+
+    if (user?.id !== adminUserId) {
+        return null;
+    }
+
+    return (
+        <Link href="/admin" onClick={onClick}>
+            <Button variant="outline" className="w-full">
+                Admin
+            </Button>
+        </Link>
+    );
+}
+
 export function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const pathname = usePathname();
+
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-white">
@@ -88,6 +125,8 @@ export function Navbar() {
                                     Dashboard
                                 </Button>
                             </Link>
+                            {/* Admin Button - Only visible to admin user */}
+                            <AdminButton />
                             <UserButton afterSignOutUrl="/" />
                         </SignedIn>
                     </div>
@@ -142,6 +181,7 @@ export function Navbar() {
                                     </SignInButton>
                                 </SignedOut>
                                 <SignedIn>
+                                    <MobileAdminButton onClick={() => setIsOpen(false)} />
                                     <Link href="/dashboard" onClick={() => setIsOpen(false)}>
                                         <Button variant="outline" className="w-full">
                                             Dashboard

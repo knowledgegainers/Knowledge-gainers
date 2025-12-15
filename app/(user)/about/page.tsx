@@ -6,58 +6,40 @@ import {
     Users,
     BookOpen,
     Award,
-    Lightbulb
+    Lightbulb,
+    Shield,
+    Clock,
+    Zap
 } from "lucide-react";
 
+// Updated based on user text: "over 1,000 members"
 const stats = [
     { value: "10K+", label: "Books Available", icon: BookOpen },
-    { value: "50K+", label: "Active Students", icon: Users },
+    { value: "1K+", label: "Community Members", icon: Users },
     { value: "5K+", label: "Exam Papers", icon: Award },
     { value: "99%", label: "Satisfaction Rate", icon: Heart },
 ];
 
 const values = [
     {
-        icon: Target,
-        title: "Our Mission",
-        description: "To democratize education by providing free and accessible study materials to every student, regardless of their background or financial status.",
+        icon: Users,
+        title: "Community First",
+        description: "We are not just a group; we are a family. We believe in the power of cooperation and mutual support to help everyone rise together.",
     },
     {
-        icon: Eye,
-        title: "Our Vision",
-        description: "To become the most trusted educational platform in India, empowering millions of students to achieve their academic and career goals.",
+        icon: Shield, // Accessibility often implies shielding/helping the needy
+        title: "Accessibility",
+        description: "We are dedicated to serving the needy. We believe that lack of resources should never be a barrier to education or career success.",
     },
     {
-        icon: Heart,
-        title: "Our Values",
-        description: "We believe in quality education for all, continuous improvement, community support, and maintaining the highest standards of integrity.",
-    },
-];
-
-const team = [
-    {
-        name: "Dr. Rajesh Kumar",
-        role: "Founder & CEO",
-        bio: "Former IAS officer with 20+ years in education sector",
-        image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face",
+        icon: Clock,
+        title: "Consistency",
+        description: "From day one, our consistency in providing updates has been our strength. We are committed to working continuously to provide up-to-date and accurate information.",
     },
     {
-        name: "Priya Sharma",
-        role: "Chief Academic Officer",
-        bio: "PhD in Education, 15 years teaching experience",
-        image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face",
-    },
-    {
-        name: "Amit Patel",
-        role: "Head of Content",
-        bio: "Former UPSC trainer, authored 10+ competitive exam books",
-        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face",
-    },
-    {
-        name: "Sneha Reddy",
-        role: "Community Manager",
-        bio: "Building student communities across India",
-        image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face",
+        icon: Zap,
+        title: "Empowerment",
+        description: "We don't just share news; we share knowledge. Our goal is to empower individuals with the skills and insights they need to develop personally and professionally.",
     },
 ];
 
@@ -74,15 +56,14 @@ export default function AboutPage() {
                     <div className="max-w-4xl mx-auto text-center">
                         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 text-blue-500 text-sm font-medium mb-8">
                             <GraduationCap className="h-4 w-4" />
-                            About Knowledge Gainers
+                            About Knowledge Gainers Teams
                         </div>
                         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
-                            Empowering Students to{" "}
-                            <span className="gradient-text">Achieve Excellence</span>
+                            Empowering Aspirants{" "}
+                            <span className="gradient-text">Since 2020</span>
                         </h1>
-                        <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-                            We started with a simple belief: quality education should be accessible to everyone.
-                            Today, we're helping thousands of students prepare for their future.
+                        <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                            A journey of dedication, shared passion, and a thriving community.
                         </p>
                     </div>
                 </div>
@@ -119,120 +100,116 @@ export default function AboutPage() {
                                 Our Story
                             </div>
                             <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-                                From a Small Idea to a{" "}
-                                <span className="gradient-text">Big Impact</span>
+                                From a Humble Start to a{" "}
+                                <span className="gradient-text">Thriving Community</span>
                             </h2>
-                            <div className="space-y-4 text-muted-foreground">
+                            <div className="space-y-4 text-muted-foreground leading-relaxed">
                                 <p>
-                                    Knowledge Gainers was founded in 2020 with a mission to bridge the gap between
-                                    quality education and accessibility. We noticed that many talented students
-                                    from rural and semi-urban areas lacked access to quality study materials and
-                                    guidance for competitive exams.
+                                    Our journey began on August 19, 2020. What started as a humble initiative with fewer than 10 members has, through dedication and shared passion, blossomed into a thriving community.
                                 </p>
                                 <p>
-                                    What started as a small initiative to share PDF books and notes has now grown
-                                    into a comprehensive educational platform serving over 50,000 students across India.
-                                    Our team of educators, content creators, and technologists work tirelessly to
-                                    bring you the best resources for your preparation.
+                                    Initially, our goal was simple: to share exam updates, current affairs, and general knowledge with a small circle of friends. However, the demand for quality information fueled our rapid expansion. Today, we are proud to stand as a strong family of over 1,000 members spanning across Andhra Pradesh and Telangana.
                                 </p>
                                 <p>
-                                    We believe that every student deserves a chance to succeed, regardless of their
-                                    economic background. That's why we keep most of our resources free and accessible
-                                    to all.
+                                    Over the years, our continuous efforts have yielded tangible results. We have watched with pride as many of our members utilized our daily resources to secure government and private sector jobs, while countless others have significantly expanded their technical and general knowledge.
+                                </p>
+                                <p>
+                                    We launched this website to take that mission further—to organize our resources and extend our helping hand to even more students in need.
                                 </p>
                             </div>
                         </div>
                         <div className="relative">
-                            <div className="aspect-square rounded-3xl overflow-hidden">
+                            <div className="aspect-square rounded-3xl overflow-hidden shadow-2xl">
                                 <img
-                                    src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&h=600&fit=crop"
-                                    alt="Students studying together"
-                                    className="w-full h-full object-cover"
+                                    src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&h=600&fit=crop"
+                                    alt="Community learning together"
+                                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                                 />
                             </div>
-                            <div className="absolute -bottom-6 -left-6 bg-card p-6 rounded-2xl shadow-lg border border-border bg-white">
-                                <div className="text-3xl font-bold gradient-text">5+ Years</div>
-                                <div className="text-sm text-muted-foreground">of Excellence</div>
+                            <div className="absolute -bottom-6 -left-6 bg-card p-6 rounded-2xl shadow-xl border border-border bg-white">
+                                <div className="text-3xl font-bold gradient-text">3+ Years</div>
+                                <div className="text-sm text-muted-foreground">of Impact</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Mission, Vision, Values */}
-            <section className="py-20 lg:py-28 bg-card">
+            {/* Mission & Vision */}
+            <section className="py-20 bg-slate-50 dark:bg-slate-900/50">
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+                        {/* Mission */}
+                        <div className="bg-white dark:bg-card rounded-3xl p-8 border border-border shadow-sm hover:shadow-md transition-all">
+                            <div className="inline-flex p-3 rounded-xl bg-blue-500/10 text-blue-500 mb-6">
+                                <Target className="h-8 w-8" />
+                            </div>
+                            <h3 className="text-2xl font-bold mb-4">Our Mission</h3>
+                            <p className="text-muted-foreground leading-relaxed">
+                                To democratize access to educational resources for every student and job aspirant. We aim to simplify the preparation journey by providing a centralized platform for job books, preparation patterns, and direct exam links, ensuring that no student has to struggle with random searches to find the right path to success.
+                            </p>
+                        </div>
+
+                        {/* Vision */}
+                        <div className="bg-white dark:bg-card rounded-3xl p-8 border border-border shadow-sm hover:shadow-md transition-all">
+                            <div className="inline-flex p-3 rounded-xl bg-purple-500/10 text-purple-500 mb-6">
+                                <Eye className="h-8 w-8" />
+                            </div>
+                            <h3 className="text-2xl font-bold mb-4">Our Vision</h3>
+                            <p className="text-muted-foreground leading-relaxed">
+                                To build a knowledgeable and successful society where every aspiring student in Andhra Pradesh, Telangana, and beyond has the support, mentorship, and materials they need to achieve their career goals. We envision a future where Knowledge Gainers Teams is the stepping stone for every student's dream job.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Values */}
+            <section className="py-20 lg:py-28">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="max-w-3xl mx-auto text-center mb-16">
+                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
+                            <Heart className="h-4 w-4" />
+                            Our Values
+                        </div>
                         <h2 className="text-3xl sm:text-4xl font-bold mb-4">
                             What Drives <span className="gradient-text">Us</span>
                         </h2>
                         <p className="text-lg text-muted-foreground">
-                            Our core principles guide everything we do at Knowledge Gainers.
+                            The core principles that guide our family.
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {values.map((value, index) => (
                             <div
                                 key={index}
-                                className="bg-background rounded-2xl p-8 border border-border hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300"
+                                className="bg-card rounded-2xl p-6 border border-border hover:shadow-lg hover:border-primary/50 transition-all duration-300"
                             >
-                                <div className="inline-flex p-4 rounded-xl gradient-hero mb-6">
-                                    <value.icon className="h-8 w-8 text-white" />
+                                <div className="inline-flex p-3 rounded-xl bg-secondary mb-4">
+                                    <value.icon className="h-6 w-6 text-foreground" />
                                 </div>
-                                <h3 className="text-xl font-semibold mb-4">
+                                <h3 className="text-xl font-semibold mb-3">
                                     {value.title}
                                 </h3>
-                                <p className="text-muted-foreground leading-relaxed">
+                                <p className="text-sm text-muted-foreground leading-relaxed">
                                     {value.description}
                                 </p>
                             </div>
                         ))}
                     </div>
-                </div>
-            </section>
 
-            {/* Team */}
-            <section className="py-20 lg:py-28">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="max-w-3xl mx-auto text-center mb-16">
-                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-                            <Users className="h-4 w-4" />
-                            Our Team
-                        </div>
-                        <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-                            Meet the <span className="gradient-text">People</span> Behind
-                        </h2>
-                        <p className="text-lg text-muted-foreground">
-                            A dedicated team of educators and technologists working to make quality education accessible.
-                        </p>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {team.map((member, index) => (
-                            <div
-                                key={index}
-                                className="group bg-card rounded-2xl border border-border p-6 text-center hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300"
-                            >
-                                <div className="relative w-24 h-24 mx-auto mb-4">
-                                    <img
-                                        src={member.image}
-                                        alt={member.name}
-                                        className="w-full h-full object-cover rounded-full"
-                                    />
-                                    <div className="absolute inset-0 rounded-full border-2 border-primary/30 group-hover:border-primary transition-colors" />
-                                </div>
-                                <h3 className="font-semibold text-lg mb-1 group-hover:text-primary transition-colors">
-                                    {member.name}
-                                </h3>
-                                <p className="text-sm text-primary font-medium mb-2">
-                                    {member.role}
-                                </p>
-                                <p className="text-sm text-muted-foreground">
-                                    {member.bio}
-                                </p>
+                    <div className="mt-20 text-center">
+                        <div className="inline-block p-8 bg-card rounded-3xl border border-border max-w-2xl mx-auto">
+                            <p className="text-lg italic text-muted-foreground">
+                                "We believe in quality education for all, continuous improvement, community support, and maintaining the highest standards of integrity."
+                            </p>
+                            <div className="mt-6 font-semibold text-primary">
+                                With regards,
+                                <br />
+                                Knowledge Gainers Team
                             </div>
-                        ))}
+                        </div>
                     </div>
                 </div>
             </section>

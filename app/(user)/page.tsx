@@ -85,7 +85,7 @@ export default function Home() {
               </Link>
               <Link href="/about">
                 <Button size="lg" variant="outline" className="gap-2 text-base">
-                  Learn More
+                  About Us
                 </Button>
               </Link>
             </div>

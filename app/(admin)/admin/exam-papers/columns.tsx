@@ -51,7 +51,7 @@ export const columns = ({ onEdit }: ColumnsProps): ColumnDef<ExamPaperColumn>[] 
     {
         accessorKey: "createdAt",
         header: "Created At",
-        cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(),
+        cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString('en-US'),
     },
     {
         id: "actions",

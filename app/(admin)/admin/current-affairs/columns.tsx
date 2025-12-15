@@ -35,7 +35,7 @@ export const columns = ({ onEdit }: ColumnsProps): ColumnDef<CurrentAffairColumn
     {
         accessorKey: "date",
         header: "Date",
-        cell: ({ row }) => new Date(row.original.date).toLocaleDateString(),
+        cell: ({ row }) => new Date(row.original.date).toLocaleDateString('en-US'),
     },
     {
         accessorKey: "content",

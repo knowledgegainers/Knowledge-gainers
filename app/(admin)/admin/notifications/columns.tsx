@@ -47,12 +47,12 @@ export const columns = ({ onEdit }: ColumnsProps): ColumnDef<NotificationColumn>
     {
         accessorKey: "expiryDate",
         header: "Expiry Date",
-        cell: ({ row }) => row.original.expiryDate ? new Date(row.original.expiryDate).toLocaleDateString() : "-",
+        cell: ({ row }) => row.original.expiryDate ? new Date(row.original.expiryDate).toLocaleDateString('en-US') : "-",
     },
     {
         accessorKey: "createdAt",
         header: "Created At",
-        cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(),
+        cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString('en-US'),
     },
     {
         id: "actions",

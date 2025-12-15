@@ -37,6 +37,16 @@ export async function getExamPapers(search?: string, typeId?: string, year?: str
     return data;
 }
 
+export async function getLatestExamPapers(limit: number = 6) {
+    return await db.query.examPapers.findMany({
+        with: {
+            type: true,
+        },
+        orderBy: desc(examPapers.createdAt),
+        limit: limit,
+    });
+}
+
 export async function getExamTypes() {
     return await db.select().from(examTypes).orderBy(desc(examTypes.createdAt));
 }

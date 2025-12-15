@@ -2,52 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FileText, Download, ArrowRight, Calendar } from "lucide-react";
-
-// Mock data - will be replaced with real data from database
-const latestPapers = [
-    {
-        id: 1,
-        title: "EAMCET Engineering 2024",
-        examType: "EAMCET",
-        year: 2024,
-        downloads: 3200,
-    },
-    {
-        id: 2,
-        title: "Polycet Previous Year Paper",
-        examType: "Polycet",
-        year: 2024,
-        downloads: 1890,
-    },
-    {
-        id: 3,
-        title: "SSC CGL Tier 1",
-        examType: "Job Exams",
-        year: 2024,
-        downloads: 4500,
-    },
-    {
-        id: 4,
-        title: "10th Board Mathematics",
-        examType: "10th",
-        year: 2024,
-        downloads: 2100,
-    },
-    {
-        id: 5,
-        title: "ECET Engineering",
-        examType: "ECET",
-        year: 2024,
-        downloads: 1650,
-    },
-    {
-        id: 6,
-        title: "12th Board Physics",
-        examType: "12th",
-        year: 2024,
-        downloads: 2800,
-    },
-];
+import { getLatestExamPapers } from "@/app/actions/exam-papers";
 
 const examTypeColors: Record<string, string> = {
     "EAMCET": "bg-blue-500/10 text-blue-600 border-blue-200 hover:bg-blue-500/20",
@@ -56,9 +11,13 @@ const examTypeColors: Record<string, string> = {
     "10th": "bg-orange-500/10 text-orange-600 border-orange-200 hover:bg-orange-500/20",
     "12th": "bg-pink-500/10 text-pink-600 border-pink-200 hover:bg-pink-500/20",
     "ECET": "bg-cyan-500/10 text-cyan-600 border-cyan-200 hover:bg-cyan-500/20",
+    // Default fallback
+    "default": "bg-secondary text-secondary-foreground hover:bg-secondary/80",
 };
 
-export function LatestExamPapersSection() {
+export async function LatestExamPapersSection() {
+    const latestPapers = await getLatestExamPapers(6);
+
     return (
         <section className="py-20 lg:py-28 bg-card">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -94,13 +53,13 @@ export function LatestExamPapersSection() {
                                 <div className="p-3 rounded-xl bg-primary/10">
                                     <FileText className="h-6 w-6 text-primary" />
                                 </div>
-                                <Badge className={examTypeColors[paper.examType] || "bg-secondary"}>
-                                    {paper.examType}
+                                <Badge className={examTypeColors[paper.type.name] || examTypeColors["default"]}>
+                                    {paper.type.name}
                                 </Badge>
                             </div>
 
                             {/* Content */}
-                            <h3 className="font-semibold text-lg mb-3 group-hover:text-primary transition-colors">
+                            <h3 className="font-semibold text-lg mb-3 group-hover:text-primary transition-colors line-clamp-2">
                                 {paper.title}
                             </h3>
 
@@ -111,13 +70,15 @@ export function LatestExamPapersSection() {
                                 </div>
                                 <div className="flex items-center gap-1.5">
                                     <Download className="h-4 w-4" />
-                                    <span>{paper.downloads.toLocaleString()}</span>
+                                    <span>PDF</span>
                                 </div>
                             </div>
 
-                            <Button variant="secondary" size="sm" className="w-full gap-2 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors">
-                                <Download className="h-4 w-4" />
-                                Download Paper
+                            <Button variant="secondary" size="sm" className="w-full gap-2 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors" asChild>
+                                <a href={paper.fileUrl} target="_blank" rel="noopener noreferrer">
+                                    <Download className="h-4 w-4" />
+                                    Download Paper
+                                </a>
                             </Button>
                         </div>
                     ))}
