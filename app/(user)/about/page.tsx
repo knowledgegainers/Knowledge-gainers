@@ -9,7 +9,9 @@ import {
     Lightbulb,
     Shield,
     Clock,
-    Zap
+    Zap,
+    Linkedin,
+    Globe
 } from "lucide-react";
 
 // Updated based on user text: "over 1,000 members"
@@ -41,6 +43,27 @@ const values = [
         title: "Empowerment",
         description: "We don't just share news; we share knowledge. Our goal is to empower individuals with the skills and insights they need to develop personally and professionally.",
     },
+];
+
+const teamMembers = [
+    {
+        name: "Dhanunjayarao",
+        title: "Electrical and Electronics Engineering",
+        education: "Velegapudi Ramakrishna Siddhartha Engineering College",
+        image: "/Dhanunjayarao.png",
+        links: [
+            { icon: Linkedin, url: "https://www.linkedin.com/in/kuna-dhanunjayarao/" }
+        ]
+    },
+    {
+        name: "UdayKiran",
+        title: "Electrical and Electronics Engineering",
+        education: "GMR Institute of Technology",
+        image: "/udaykiran.png",
+        links: [
+            { icon: Globe, url: "https://udaykiran-peddinti.vercel.app/" }
+        ]
+    }
 ];
 
 export default function AboutPage() {
@@ -160,6 +183,60 @@ export default function AboutPage() {
                                 To build a knowledgeable and successful society where every aspiring student in Andhra Pradesh, Telangana, and beyond has the support, mentorship, and materials they need to achieve their career goals. We envision a future where Knowledge Gainers Teams is the stepping stone for every student's dream job.
                             </p>
                         </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Team */}
+            <section className="py-20 lg:py-28">
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="max-w-3xl mx-auto text-center mb-16">
+                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
+                            <Users className="h-4 w-4" />
+                            Our Team
+                        </div>
+                        <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+                            Meet the <span className="gradient-text">Minds</span> Behind
+                        </h2>
+                        <p className="text-lg text-muted-foreground">
+                            Dedicated individuals working to empower the community.
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                        {teamMembers.map((member, index) => (
+                            <div key={index} className="group relative bg-card rounded-3xl p-6 border border-border hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                                <div className="relative aspect-square mb-6 overflow-hidden rounded-2xl bg-secondary/50">
+                                    <img
+                                        src={member.image}
+                                        alt={member.name}
+                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-6">
+                                        <div className="flex gap-4">
+                                            {member.links.map((link, i) => (
+                                                <a
+                                                    key={i}
+                                                    href={link.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="p-2 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-white transition-colors"
+                                                >
+                                                    <link.icon className="h-5 w-5" />
+                                                </a>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="text-center">
+                                    <h3 className="text-xl font-bold mb-1">{member.name}</h3>
+                                    <p className="text-primary font-medium mb-2">{member.title}</p>
+                                    {member.education && (
+                                        <p className="text-sm text-muted-foreground">{member.education}</p>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </section>
