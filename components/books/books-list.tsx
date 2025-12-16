@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, Download, User, Heart, Loader2 } from "lucide-react";
+import { BookOpen, Download, User, Heart, Loader2, Eye } from "lucide-react";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { BookWithCategory, toggleBookSave } from "@/app/actions/books";
 import { toast } from "sonner";
@@ -119,18 +120,12 @@ export function BooksList({ books, savedBookIds: initialSavedBookIds, viewMode }
                                     <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
                                         {book.description}
                                     </p>
-                                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-                                        <User className="h-4 w-4" />
-                                        <span>Admin</span>
-                                        <span className="text-border">•</span>
-                                        <Download className="h-4 w-4" />
-                                        <span>0</span>
-                                    </div>
+
                                     <Button variant="secondary" size="sm" className="w-full gap-2" asChild>
-                                        <a href={book.fileUrl} target="_blank" rel="noopener noreferrer">
-                                            <Download className="h-4 w-4" />
-                                            Download
-                                        </a>
+                                        <Link href={`/books/${book.id}`}>
+                                            <Eye className="h-4 w-4" />
+                                            View
+                                        </Link>
                                     </Button>
                                 </div>
                             </div>
@@ -199,10 +194,10 @@ export function BooksList({ books, savedBookIds: initialSavedBookIds, viewMode }
                                 {/* Action */}
                                 <div className="shrink-0 self-end sm:self-center">
                                     <Button className="gap-2" asChild>
-                                        <a href={book.fileUrl} target="_blank" rel="noopener noreferrer">
-                                            <Download className="h-4 w-4" />
-                                            Download
-                                        </a>
+                                        <Link href={`/books/${book.id}`}>
+                                            <Eye className="h-4 w-4" />
+                                            View
+                                        </Link>
                                     </Button>
                                 </div>
                             </div>

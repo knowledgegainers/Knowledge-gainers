@@ -48,7 +48,7 @@ const values = [
 const teamMembers = [
     {
         name: "Dhanunjayarao",
-        title: "Electrical and Electronics Engineering",
+        title: "Electrical and Electronics Engineer",
         education: "Velegapudi Ramakrishna Siddhartha Engineering College",
         image: "/Dhanunjayarao.png",
         links: [
@@ -57,7 +57,7 @@ const teamMembers = [
     },
     {
         name: "UdayKiran",
-        title: "Electrical and Electronics Engineering",
+        title: "Electrical and Electronics Engineer",
         education: "GMR Institute of Technology",
         image: "/udaykiran.png",
         links: [

@@ -44,6 +44,15 @@ export async function getLatestBooks(limit: number = 4) {
     });
 }
 
+export async function getBookById(id: string) {
+    return await db.query.books.findFirst({
+        where: eq(books.id, id),
+        with: {
+            category: true,
+        },
+    });
+}
+
 export async function getBookCategories() {
     return await db.select().from(bookCategories).orderBy(desc(bookCategories.createdAt));
 }
