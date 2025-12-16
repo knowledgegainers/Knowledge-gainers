@@ -35,7 +35,7 @@ export function ImageKitUpload({ folder, onUploadComplete, currentImageUrl, labe
             return { signature, expire, token, publicKey };
         } catch (error) {
             console.error("Authentication error:", error);
-            throw new Error("Authentication request failed");
+            throw error;
         }
     };
 
@@ -68,7 +68,7 @@ export function ImageKitUpload({ folder, onUploadComplete, currentImageUrl, labe
             authParams = await authenticator();
         } catch (authError) {
             console.error("Failed to authenticate for upload:", authError);
-            toast.error("Failed to authenticate upload");
+            toast.error(authError instanceof Error ? authError.message : "Failed to authenticate upload");
             setUploading(false);
             return;
         }
