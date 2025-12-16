@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Download, ChevronLeft } from "lucide-react";
 import Link from "next/link";
-import { PdfViewer } from "@/components/books/pdf-viewer";
+import { PdfViewerWrapper } from "@/components/books/pdf-viewer-wrapper";
 
 interface BookPageProps {
     params: Promise<{
@@ -44,7 +44,7 @@ export default async function BookPage({ params }: BookPageProps) {
 
                 <div className="space-y-4">
                     <h2 className="text-xl font-semibold">Preview</h2>
-                    <PdfViewer url={book.fileUrl} />
+                    <PdfViewerWrapper url={book.fileUrl} />
                 </div>
 
                 <div className="flex justify-center pt-4">

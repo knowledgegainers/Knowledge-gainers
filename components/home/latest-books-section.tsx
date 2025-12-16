@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, Download, ArrowRight, User } from "lucide-react";
 import { getLatestBooks } from "@/app/actions/books";
+import { BookActionButton } from "@/components/home/book-action-button";
 
 export async function LatestBooksSection() {
     const latestBooks = await getLatestBooks(4);
@@ -55,19 +56,7 @@ export async function LatestBooksSection() {
                                 <h3 className="font-semibold text-lg mb-2 line-clamp-2 group-hover:text-primary transition-colors">
                                     {book.title}
                                 </h3>
-                                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-                                    <User className="h-4 w-4" />
-                                    <span>Admin</span>
-                                    <span className="text-border">•</span>
-                                    <Download className="h-4 w-4" />
-                                    <span>PDF</span>
-                                </div>
-                                <Button variant="secondary" size="sm" className="w-full gap-2" asChild>
-                                    <a href={book.fileUrl} target="_blank" rel="noopener noreferrer">
-                                        <Download className="h-4 w-4" />
-                                        Download
-                                    </a>
-                                </Button>
+                                <BookActionButton bookId={book.id} />
                             </div>
                         </div>
                     ))}

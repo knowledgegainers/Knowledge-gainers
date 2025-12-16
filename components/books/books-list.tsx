@@ -10,6 +10,7 @@ import { BookWithCategory, toggleBookSave } from "@/app/actions/books";
 import { toast } from "sonner";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import { SignInButton } from "@clerk/nextjs";
 
 interface BooksListProps {
     books: BookWithCategory[];
@@ -121,12 +122,21 @@ export function BooksList({ books, savedBookIds: initialSavedBookIds, viewMode }
                                         {book.description}
                                     </p>
 
-                                    <Button variant="secondary" size="sm" className="w-full gap-2" asChild>
-                                        <Link href={`/books/${book.id}`}>
-                                            <Eye className="h-4 w-4" />
-                                            View
-                                        </Link>
-                                    </Button>
+                                    {userId ? (
+                                        <Button variant="secondary" size="sm" className="w-full gap-2" asChild>
+                                            <Link href={`/books/${book.id}`}>
+                                                <Eye className="h-4 w-4" />
+                                                View
+                                            </Link>
+                                        </Button>
+                                    ) : (
+                                        <SignInButton mode="modal">
+                                            <Button variant="secondary" size="sm" className="w-full gap-2">
+                                                <User className="h-4 w-4" />
+                                                Sign in to view
+                                            </Button>
+                                        </SignInButton>
+                                    )}
                                 </div>
                             </div>
                         );
@@ -180,25 +190,27 @@ export function BooksList({ books, savedBookIds: initialSavedBookIds, viewMode }
                                         {book.description}
                                     </p>
                                     <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                                        <div className="flex items-center gap-1.5">
-                                            <User className="h-4 w-4" />
-                                            <span>Admin</span>
-                                        </div>
-                                        <div className="flex items-center gap-1.5">
-                                            <Download className="h-4 w-4" />
-                                            <span>0 downloads</span>
-                                        </div>
+
                                     </div>
                                 </div>
 
                                 {/* Action */}
                                 <div className="shrink-0 self-end sm:self-center">
-                                    <Button className="gap-2" asChild>
-                                        <Link href={`/books/${book.id}`}>
-                                            <Eye className="h-4 w-4" />
-                                            View
-                                        </Link>
-                                    </Button>
+                                    {userId ? (
+                                        <Button className="gap-2" asChild>
+                                            <Link href={`/books/${book.id}`}>
+                                                <Eye className="h-4 w-4" />
+                                                View
+                                            </Link>
+                                        </Button>
+                                    ) : (
+                                        <SignInButton mode="modal">
+                                            <Button className="gap-2">
+                                                <User className="h-4 w-4" />
+                                                Sign in to view
+                                            </Button>
+                                        </SignInButton>
+                                    )}
                                 </div>
                             </div>
                         );

@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { Loader2 } from "lucide-react";
+import Link from "next/link";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
+import { Button } from "../ui/button";
 
 // Configure worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
@@ -44,7 +46,12 @@ export function PdfViewer({ url }: PdfViewerProps) {
                 }
                 error={
                     <div className="text-red-500 p-4 text-center">
-                        Failed to load PDF. The file might be corrupted or inaccessible.
+                        <p >It is not accessible by view please contact the admin</p>
+                        <Link href="/contact">
+                            <Button className="mt-2" variant="outline">
+                                Contact us
+                            </Button>
+                        </Link>
                     </div>
                 }
                 className="max-w-full overflow-hidden"
