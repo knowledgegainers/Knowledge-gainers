@@ -146,3 +146,14 @@ export async function isExamPaperSaved(clerkId: string, paperId: string) {
 
     return !!existing;
 }
+
+export async function getExamPaperById(id: string) {
+    const paper = await db.query.examPapers.findFirst({
+        where: eq(examPapers.id, id),
+        with: {
+            type: true,
+        },
+    });
+
+    return paper;
+}

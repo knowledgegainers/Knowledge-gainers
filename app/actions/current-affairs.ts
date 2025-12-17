@@ -45,3 +45,11 @@ export async function getCurrentAffairsCategories() {
     const categories = await db.selectDistinct({ category: currentAffairs.category }).from(currentAffairs);
     return categories.map(c => c.category);
 }
+
+export async function getCurrentAffairById(id: string) {
+    const item = await db.query.currentAffairs.findFirst({
+        where: eq(currentAffairs.id, id),
+    });
+
+    return item;
+}

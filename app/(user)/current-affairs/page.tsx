@@ -50,7 +50,8 @@ export default async function CurrentAffairsPage({
             </section>
 
             {/* GK Quiz Section */}
-            <section className="py-12 lg:py-16 bg-card">
+            {/* TODO: <CurrentAffairsQuiz />
+                <section className="py-12 lg:py-16 bg-card">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="max-w-3xl mx-auto text-center">
                         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
@@ -71,6 +72,8 @@ export default async function CurrentAffairsPage({
                     </div>
                 </div>
             </section>
+            */}
+
         </div>
     );
 }

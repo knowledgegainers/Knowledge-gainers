@@ -141,3 +141,14 @@ export async function isNotificationSaved(clerkId: string, notificationId: strin
 
     return !!existing;
 }
+
+export async function getNotificationById(id: string) {
+    const notification = await db.query.notifications.findFirst({
+        where: eq(notifications.id, id),
+        with: {
+            type: true,
+        },
+    });
+
+    return notification;
+}

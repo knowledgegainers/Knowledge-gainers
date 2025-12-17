@@ -194,7 +194,7 @@ export default function CurrentAffairsClient({ initialPosts, categories }: Curre
                                 style={{ animationDelay: `${index * 0.05}s` }}
                             >
                                 <div className="flex items-start justify-between gap-4 mb-4">
-                                    <Badge className={categoryColors[post.category] || "bg-secondary"}>
+                                    <Badge className="bg-blue-500">
                                         {post.category}
                                     </Badge>
                                     {/* Read time not in DB, removed or mocked if needed. Removed from display or use constant. */}

@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, ArrowRight, TrendingUp, Newspaper } from "lucide-react";
+import Link from "next/link";
 import { currentAffairs } from "@/db/schema";
 
 type CurrentAffair = typeof currentAffairs.$inferSelect;
@@ -56,7 +57,7 @@ export function CurrentAffairsList({ posts }: CurrentAffairsListProps) {
                         style={{ animationDelay: `${index * 0.05}s` }}
                     >
                         <div className="flex items-start justify-between gap-4 mb-4">
-                            <Badge className={categoryColors[post.category] || "bg-secondary"}>
+                            <Badge className="bg-black text-white">
                                 {post.category}
                             </Badge>
                         </div>
@@ -74,9 +75,11 @@ export function CurrentAffairsList({ posts }: CurrentAffairsListProps) {
                                 <Calendar className="h-4 w-4" />
                                 <span>{formatDate(post.date)}</span>
                             </div>
-                            <Button variant="ghost" size="sm" className="gap-1 group-hover:text-primary">
-                                Read More
-                                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                            <Button variant="ghost" size="sm" className="gap-1 group-hover:text-primary" asChild>
+                                <Link href={`/current-affairs/${post.id}`}>
+                                    Read More
+                                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                                </Link>
                             </Button>
                         </div>
                     </div>

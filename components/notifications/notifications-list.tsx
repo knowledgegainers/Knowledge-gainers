@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Bell, Briefcase, GraduationCap, Calendar, Clock, ExternalLink } from "lucide-react";
+import Link from "next/link";
 import { NotificationWithType } from "@/app/actions/notifications";
 import { notificationTypes } from "@/db/schema";
 import { cn } from "@/lib/utils";
@@ -143,10 +144,9 @@ export function NotificationsList({ notifications, types, selectedType }: Notifi
                                         {isExpired ? (
                                             'Closed'
                                         ) : (
-                                            <a href={notification.applyLink || "#"} target="_blank" rel="noopener noreferrer">
-                                                Apply Now
-                                                <ExternalLink className="h-4 w-4" />
-                                            </a>
+                                            <Link href={`/notifications/${notification.id}`}>
+                                                View Details
+                                            </Link>
                                         )}
                                     </Button>
                                 </div>

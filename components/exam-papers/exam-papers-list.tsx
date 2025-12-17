@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FileText, Calendar, Download } from "lucide-react";
+import Link from "next/link";
 import { ExamPaperWithType } from "@/app/actions/exam-papers";
 import { examTypes } from "@/db/schema";
 
@@ -85,10 +86,9 @@ export function ExamPapersList({ papers, types, selectedExamType, selectedYear }
                         </div>
 
                         <Button variant="secondary" size="sm" className="w-full gap-2 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors" asChild>
-                            <a href={paper.fileUrl} target="_blank" rel="noopener noreferrer">
-                                <Download className="h-4 w-4" />
-                                Download Paper
-                            </a>
+                            <Link href={`/exam-papers/${paper.id}`}>
+                                View Details
+                            </Link>
                         </Button>
                     </div>
                 ))}
