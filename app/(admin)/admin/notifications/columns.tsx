@@ -30,11 +30,9 @@ export type NotificationColumn = {
     };
 };
 
-interface ColumnsProps {
-    onEdit: (notification: NotificationColumn) => void;
-}
+interface ColumnsProps { }
 
-export const columns = ({ onEdit }: ColumnsProps): ColumnDef<NotificationColumn>[] => [
+export const columns = (props: ColumnsProps = {}): ColumnDef<NotificationColumn>[] => [
     {
         accessorKey: "title",
         header: "Title",
@@ -83,8 +81,10 @@ export const columns = ({ onEdit }: ColumnsProps): ColumnDef<NotificationColumn>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => onEdit(notification)}>
-                            <Edit className="mr-2 h-4 w-4" /> Edit
+                        <DropdownMenuItem asChild>
+                            <a href={`/admin/notifications/${notification.id}`} className="flex items-center">
+                                <Edit className="mr-2 h-4 w-4" /> Edit
+                            </a>
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={handleDelete} className="text-red-600">
                             <Trash className="mr-2 h-4 w-4" /> Delete

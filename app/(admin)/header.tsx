@@ -1,3 +1,5 @@
+"use client";
+
 import { UserButton } from "@clerk/nextjs";
 import { Bell, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";

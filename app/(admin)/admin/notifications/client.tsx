@@ -1,13 +1,12 @@
 
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { DataTable } from "@/components/ui/data-table";
 import { columns } from "./columns";
-import { NotificationDialog } from "./notification-dialog";
 import { Separator } from "@/components/ui/separator";
+import { useRouter } from "next/navigation";
 
 interface Notification {
     id: string;
@@ -29,18 +28,7 @@ interface NotificationsClientProps {
 }
 
 export function NotificationsClient({ initialNotifications, types }: NotificationsClientProps) {
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [selectedNotification, setSelectedNotification] = useState<any>(null);
-
-    const handleEdit = (notification: any) => {
-        setSelectedNotification(notification);
-        setIsDialogOpen(true);
-    };
-
-    const handleCreate = () => {
-        setSelectedNotification(null);
-        setIsDialogOpen(true);
-    };
+    const router = useRouter();
 
     return (
         <div className="space-y-6">
@@ -51,21 +39,15 @@ export function NotificationsClient({ initialNotifications, types }: Notificatio
                         Manage your alerts and notifications.
                     </p>
                 </div>
-                <Button onClick={handleCreate}>
+                <Button onClick={() => router.push("/admin/notifications/create")}>
                     <Plus className="mr-2 h-4 w-4" /> Add New
                 </Button>
             </div>
             <Separator />
             <DataTable
-                columns={columns({ onEdit: handleEdit })}
+                columns={columns()}
                 data={initialNotifications}
                 searchKey="title"
-            />
-            <NotificationDialog
-                open={isDialogOpen}
-                onOpenChange={setIsDialogOpen}
-                initialData={selectedNotification}
-                types={types}
             />
         </div>
     );

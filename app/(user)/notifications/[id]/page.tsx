@@ -25,7 +25,7 @@ export default async function NotificationPage({ params }: NotificationPageProps
     const isExpired = notification.expiryDate ? new Date(notification.expiryDate) < new Date() : false;
 
     return (
-        <div className="container mx-auto py-8">
+        <div className="container mx-auto py-8 px-4 md:px-6">
             <Link href="/notifications" className="flex items-center text-muted-foreground hover:text-foreground mb-6 transition-colors">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Notifications
@@ -58,7 +58,7 @@ export default async function NotificationPage({ params }: NotificationPageProps
 
                 <div className="py-2">
                     <div
-                        className="prose prose-blue max-w-none dark:prose-invert prose-headings:font-bold prose-a:text-primary hover:prose-a:underline"
+                        className="prose prose-blue max-w-none prose-headings:font-bold prose-a:text-primary hover:prose-a:underline tiptap"
                         dangerouslySetInnerHTML={{ __html: notification.description }}
                     />
                 </div>

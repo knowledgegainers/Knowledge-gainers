@@ -1,18 +1,8 @@
-
 "use client";
 
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog";
 import {
     Form,
     FormControl,
@@ -23,7 +13,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import {
     Select,
@@ -34,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Card, CardContent } from "@/components/ui/card";
 
 const formSchema = z.object({
     title: z.string().min(1, "Title is required"),
@@ -43,45 +33,23 @@ const formSchema = z.object({
     expiryDate: z.string().optional(),
 });
 
-interface NotificationDialogProps {
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
+interface NotificationFormProps {
     initialData?: any;
     types: any[];
 }
 
-export function NotificationDialog({ open, onOpenChange, initialData, types }: NotificationDialogProps) {
+export function NotificationForm({ initialData, types }: NotificationFormProps) {
     const router = useRouter();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            title: "",
-            description: "",
-            typeId: "",
-            applyLink: "",
-            expiryDate: "",
+            title: initialData?.title || "",
+            description: initialData?.description || "",
+            typeId: initialData?.typeId || "",
+            applyLink: initialData?.applyLink || "",
+            expiryDate: initialData?.expiryDate ? new Date(initialData.expiryDate).toISOString().split('T')[0] : "",
         },
     });
-
-    useEffect(() => {
-        if (initialData) {
-            form.reset({
-                title: initialData.title,
-                description: initialData.description,
-                typeId: initialData.typeId,
-                applyLink: initialData.applyLink || "",
-                expiryDate: initialData.expiryDate ? new Date(initialData.expiryDate).toISOString().split('T')[0] : "",
-            });
-        } else {
-            form.reset({
-                title: "",
-                description: "",
-                typeId: "",
-                applyLink: "",
-                expiryDate: "",
-            });
-        }
-    }, [initialData, form]);
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
@@ -93,6 +61,7 @@ export function NotificationDialog({ open, onOpenChange, initialData, types }: N
                 });
                 if (!res.ok) throw new Error("Failed to update");
                 toast.success("Notification updated");
+                router.refresh();
             } else {
                 const res = await fetch("/api/admin/notifications", {
                     method: "POST",
@@ -100,68 +69,64 @@ export function NotificationDialog({ open, onOpenChange, initialData, types }: N
                     body: JSON.stringify(values),
                 });
                 if (!res.ok) throw new Error("Failed to create");
+                const data = await res.json();
                 toast.success("Notification created");
+                router.refresh();
+                router.push(`/admin/notifications/${data.id}`);
             }
-            router.refresh();
-            onOpenChange(false);
         } catch (error) {
             toast.error("Something went wrong");
         }
     };
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[500px]">
-                <DialogHeader>
-                    <DialogTitle>{initialData ? "Edit Notification" : "Add Notification"}</DialogTitle>
-                    <DialogDescription>
-                        {initialData ? "Edit the notification details below." : "Create a new alert."}
-                    </DialogDescription>
-                </DialogHeader>
+        <Card className="max-w-4xl mx-auto">
+            <CardContent className="p-6">
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        <FormField
-                            control={form.control}
-                            name="title"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Title</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Notification Title" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="typeId"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Type</FormLabel>
-                                    <Select
-                                        onValueChange={field.onChange}
-                                        defaultValue={field.value}
-                                        value={field.value}
-                                    >
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <FormField
+                                control={form.control}
+                                name="title"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Title</FormLabel>
                                         <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select type" />
-                                            </SelectTrigger>
+                                            <Input placeholder="Notification Title" {...field} />
                                         </FormControl>
-                                        <SelectContent>
-                                            {types.map((type) => (
-                                                <SelectItem key={type.id} value={type.id}>
-                                                    {type.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <div className="grid grid-cols-2 gap-4">
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="typeId"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Type</FormLabel>
+                                        <Select
+                                            onValueChange={field.onChange}
+                                            defaultValue={field.value}
+                                        >
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select type" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {types.map((type) => (
+                                                    <SelectItem key={type.id} value={type.id}>
+                                                        {type.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <FormField
                                 control={form.control}
                                 name="applyLink"
@@ -206,12 +171,13 @@ export function NotificationDialog({ open, onOpenChange, initialData, types }: N
                                 </FormItem>
                             )}
                         />
-                        <DialogFooter>
-                            <Button type="submit">{initialData ? "Save changes" : "Create"}</Button>
-                        </DialogFooter>
+                        <div className="flex justify-end gap-2">
+                            <Button type="button" variant="outline" onClick={() => router.back()}>Cancel</Button>
+                            <Button type="submit">{initialData ? "Save Changes" : "Create Notification"}</Button>
+                        </div>
                     </form>
                 </Form>
-            </DialogContent>
-        </Dialog>
+            </CardContent>
+        </Card>
     );
 }
