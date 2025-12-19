@@ -2,7 +2,7 @@
 
 import { db } from "@/db";
 import { books, bookCategories, savedBooks, users } from "@/db/schema";
-import { eq, desc, like, and, or } from "drizzle-orm";
+import { eq, desc, ilike, and, or } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 export type BookWithCategory = typeof books.$inferSelect & {
@@ -15,10 +15,10 @@ export async function getBooks(search?: string, categoryId?: string) {
     if (search && categoryId && categoryId !== "all") {
         whereClause = and(
             eq(books.categoryId, categoryId),
-            or(like(books.title, `%${search}%`), like(books.description, `%${search}%`))
+            or(ilike(books.title, `%${search}%`), ilike(books.description, `%${search}%`))
         );
     } else if (search) {
-        whereClause = or(like(books.title, `%${search}%`), like(books.description, `%${search}%`));
+        whereClause = or(ilike(books.title, `%${search}%`), ilike(books.description, `%${search}%`));
     } else if (categoryId && categoryId !== "all") {
         whereClause = eq(books.categoryId, categoryId);
     }

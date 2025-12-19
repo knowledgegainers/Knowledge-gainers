@@ -61,7 +61,7 @@ export function ExamPapersList({ papers, types, selectedExamType, selectedYear }
                             <div className="p-3 rounded-xl bg-primary/10">
                                 <FileText className="h-6 w-6 text-primary" />
                             </div>
-                            <Badge className={examTypeColors[paper.type.slug] || "bg-secondary"}>
+                            <Badge className="bg-primary/10 text-primary ">
                                 {paper.type.name}
                             </Badge>
                         </div>
@@ -71,7 +71,8 @@ export function ExamPapersList({ papers, types, selectedExamType, selectedYear }
                             {paper.title}
                         </h3>
                         <p className="text-sm text-muted-foreground mb-4">
-                            {paper.description}
+                            {(paper.description || "").split(" ").slice(0, 10).join(" ")}
+                            {(paper.description || "").split(" ").length > 10 ? "..." : ""}
                         </p>
 
                         <div className="flex items-center gap-4 text-sm text-muted-foreground mb-5">
@@ -79,17 +80,12 @@ export function ExamPapersList({ papers, types, selectedExamType, selectedYear }
                                 <Calendar className="h-4 w-4 text-black" />
                                 <span>{paper.year}</span>
                             </div>
-                            <div className="flex items-center gap-1.5">
-                                <Download className="h-4 w-4 text-black" />
-                                <span>0</span>
-                            </div>
                         </div>
-
-                        <Button variant="secondary" size="sm" className="w-full gap-2 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors" asChild>
-                            <Link href={`/exam-papers/${paper.id}`}>
+                        <Link href={`/exam-papers/${paper.id}`}>
+                            <Button className="w-full">
                                 View Details
-                            </Link>
-                        </Button>
+                            </Button>
+                        </Link>
                     </div>
                 ))}
             </div>

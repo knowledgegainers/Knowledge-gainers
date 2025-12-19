@@ -15,6 +15,7 @@ import {
     GraduationCap,
     User,
     LogIn,
+    PenTool,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -24,6 +25,7 @@ const navLinks = [
     { href: "/exam-papers", label: "Exam Papers", icon: FileText },
     { href: "/notifications", label: "Notifications", icon: Bell },
     { href: "/current-affairs", label: "Current Affairs", icon: Newspaper },
+    { href: "/blogs", label: "Blogs", icon: PenTool },
     { href: "/about", label: "About", icon: null },
 ];
 

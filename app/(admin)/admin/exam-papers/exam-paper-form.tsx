@@ -18,59 +18,59 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { TypeCombobox } from "@/components/admin/type-combobox";
-import { ArrowLeft, Save, LayoutTemplate, Link as LinkIcon, Calendar } from "lucide-react";
+import { ArrowLeft, Save, LayoutTemplate, Calendar, FileText } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 
 const formSchema = z.object({
     title: z.string().min(1, "Title is required"),
-    description: z.string().min(1, "Description is required"),
     typeId: z.string().min(1, "Type is required"),
-    applyLink: z.string().optional(),
-    expiryDate: z.string().optional(),
+    year: z.coerce.number().min(1900, "Invalid year").max(new Date().getFullYear() + 1, "Invalid year"),
+    description: z.string().optional(),
+    fileUrl: z.string().min(1, "File URL is required"),
 });
 
-interface NotificationFormProps {
+interface ExamPaperFormProps {
     initialData?: any;
     types: any[];
 }
 
-export function NotificationForm({ initialData, types }: NotificationFormProps) {
+export function ExamPaperForm({ initialData, types }: ExamPaperFormProps) {
     const router = useRouter();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             title: initialData?.title || "",
-            description: initialData?.description || "",
             typeId: initialData?.typeId || "",
-            applyLink: initialData?.applyLink || "",
-            expiryDate: initialData?.expiryDate ? new Date(initialData.expiryDate).toISOString().split('T')[0] : "",
+            year: initialData?.year || new Date().getFullYear(),
+            description: initialData?.description || "",
+            fileUrl: initialData?.fileUrl || "",
         },
     });
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
             if (initialData) {
-                const res = await fetch(`/api/admin/notifications/${initialData.id}`, {
+                const res = await fetch(`/api/admin/exam-papers/${initialData.id}`, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(values),
                 });
                 if (!res.ok) throw new Error("Failed to update");
-                toast.success("Notification updated");
-                router.refresh();
+                toast.success("Paper updated");
             } else {
-                const res = await fetch("/api/admin/notifications", {
+                const res = await fetch("/api/admin/exam-papers", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(values),
                 });
                 if (!res.ok) throw new Error("Failed to create");
-                const data = await res.json();
-                toast.success("Notification created");
+                toast.success("Paper created");
+                router.push("/admin/exam-papers");
                 router.refresh();
-                router.push(`/admin/notifications/${data.id}`);
+                return;
             }
+            router.refresh();
         } catch (error) {
             toast.error("Something went wrong");
         }
@@ -78,16 +78,16 @@ export function NotificationForm({ initialData, types }: NotificationFormProps) 
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="h-[calc(100vh-80px)] flex flex-col ">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="h-[calc(100vh-80px)] flex flex-col">
                 {/* Toolbar */}
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-4">
-                        <Button variant="ghost" size="sm" className="gap-2" onClick={() => router.push("/admin/notifications")} type="button">
+                        <Button variant="ghost" size="sm" className="gap-2" onClick={() => router.push("/admin/exam-papers")} type="button">
                             <ArrowLeft className="w-4 h-4" />
                             Back to List
                         </Button>
                         <Separator orientation="vertical" className="h-6" />
-                        <span className="text-sm font-medium text-muted-foreground">{initialData ? "Editing Notification" : "New Notification"}</span>
+                        <span className="text-sm font-medium text-muted-foreground">{initialData ? "Editing Paper" : "New Exam Paper"}</span>
                     </div>
                     <Button type="submit" size="sm">
                         <Save className="w-4 h-4 mr-2" />
@@ -106,8 +106,8 @@ export function NotificationForm({ initialData, types }: NotificationFormProps) 
                                     <FormItem>
                                         <FormControl>
                                             <Input
-                                                placeholder="Notification Title"
-                                                className="text-4xl font-bold border-none px-0 shadow-none focus-visible:ring-0 h-auto placeholder:text-muted-foreground/50"
+                                                placeholder="Add Exam Title"
+                                                className="text-3xl font-bold border-none px-0 shadow-none focus-visible:ring-0 h-auto placeholder:text-muted-foreground/50"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -124,9 +124,8 @@ export function NotificationForm({ initialData, types }: NotificationFormProps) 
                                             <RichTextEditor
                                                 value={field.value || ""}
                                                 onChange={field.onChange}
-                                                placeholder="Add details..."
-                                                className="min-h-[400px] border-none shadow-none focus-within:ring-0 [&>div:first-child]:sticky [&>div:first-child]:top-0 [&>div:first-child]:z-50 [&>div:first-child]:bg-background [&>div:first-child]:border-b"
-
+                                                placeholder="Add description details..."
+                                                className="min-h-[400px] border-none shadow-none focus-within:ring-0"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -151,14 +150,14 @@ export function NotificationForm({ initialData, types }: NotificationFormProps) 
                                             name="typeId"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <Label className="text-xs uppercase text-muted-foreground font-bold tracking-wider">Type</Label>
+                                                    <Label className="text-xs uppercase text-muted-foreground font-bold tracking-wider">Exam Type</Label>
                                                     <FormControl>
                                                         <TypeCombobox
                                                             value={field.value}
                                                             onChange={field.onChange}
                                                             types={types}
-                                                            typeLabel="Notification Type"
-                                                            createUrl="/api/admin/notification-types"
+                                                            typeLabel="Exam Type"
+                                                            createUrl="/api/admin/exam-types"
                                                         />
                                                     </FormControl>
                                                     <FormMessage />
@@ -167,12 +166,12 @@ export function NotificationForm({ initialData, types }: NotificationFormProps) 
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="expiryDate"
+                                            name="year"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <Label className="text-xs uppercase text-muted-foreground font-bold tracking-wider">Expiry Date</Label>
+                                                    <Label className="text-xs uppercase text-muted-foreground font-bold tracking-wider">Year</Label>
                                                     <FormControl>
-                                                        <Input type="date" {...field} />
+                                                        <Input type="number" {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -184,17 +183,17 @@ export function NotificationForm({ initialData, types }: NotificationFormProps) 
 
                             <div className="space-y-2">
                                 <h3 className="text-sm font-medium flex items-center gap-2">
-                                    <LinkIcon className="w-4 h-4" />
-                                    Actions
+                                    <FileText className="w-4 h-4" />
+                                    Resources
                                 </h3>
                                 <Card>
                                     <CardContent className="p-4 space-y-4">
                                         <FormField
                                             control={form.control}
-                                            name="applyLink"
+                                            name="fileUrl"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <Label className="text-xs uppercase text-muted-foreground font-bold tracking-wider">Apply Link</Label>
+                                                    <Label className="text-xs uppercase text-muted-foreground font-bold tracking-wider">PDF URL</Label>
                                                     <FormControl>
                                                         <Input placeholder="https://..." {...field} />
                                                     </FormControl>

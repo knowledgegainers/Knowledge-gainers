@@ -23,7 +23,7 @@ export default async function CurrentAffairPage({ params }: CurrentAffairPagePro
     }
 
     return (
-        <div className="container mx-auto py-8">
+        <div className="container mx-auto p-4">
             <Link href="/current-affairs" className="flex items-center text-muted-foreground hover:text-foreground mb-6 transition-colors">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Current Affairs
@@ -62,7 +62,7 @@ export default async function CurrentAffairPage({ params }: CurrentAffairPagePro
 
                 <div className="py-2">
                     <div
-                        className="prose prose-blue max-w-none dark:prose-invert prose-headings:font-bold prose-a:text-primary hover:prose-a:underline"
+
                         dangerouslySetInnerHTML={{ __html: item.content }} // Assuming content could be HTML, if not just render as text
                     />
                 </div>

@@ -21,30 +21,16 @@ const sidebarItems = [
         href: "/admin",
         icon: LayoutDashboard,
     },
-    {
-        title: "Book Categories",
-        href: "/admin/categories",
-        icon: Library,
-    },
+
     {
         title: "Books",
         href: "/admin/books",
         icon: BookOpen,
     },
     {
-        title: "Exam Types",
-        href: "/admin/exam-types",
-        icon: FileText,
-    },
-    {
         title: "Exam Papers",
         href: "/admin/exam-papers",
         icon: FileText,
-    },
-    {
-        title: "Notification Types",
-        href: "/admin/notification-types",
-        icon: Bell,
     },
     {
         title: "Notifications",
@@ -60,6 +46,11 @@ const sidebarItems = [
         title: "Users",
         href: "/admin/users",
         icon: User,
+    },
+    {
+        title: "Blogs",
+        href: "/admin/blogs",
+        icon: Newspaper,
     },
     {
         title: "Contact",

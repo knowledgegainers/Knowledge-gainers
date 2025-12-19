@@ -41,9 +41,10 @@ interface RichTextEditorProps {
     value: string;
     onChange: (value: string) => void;
     placeholder?: string;
+    className?: string;
 }
 
-export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorProps) {
+export function RichTextEditor({ value, onChange, placeholder, className }: RichTextEditorProps) {
     const editor = useEditor({
         extensions: [
             StarterKit,
@@ -105,7 +106,7 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
     };
 
     return (
-        <div className="border rounded-md overflow-hidden bg-background">
+        <div className={cn("border rounded-md overflow-hidden bg-background", className)}>
             <div className="border-b p-2 flex flex-wrap gap-1 bg-muted/50">
                 <Button
                     variant="ghost"

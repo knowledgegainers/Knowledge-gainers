@@ -1,46 +1,18 @@
-
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { DataTable } from "@/components/ui/data-table";
 import { columns } from "./columns";
-import { BookDialog } from "./book-dialog";
 import { Separator } from "@/components/ui/separator";
-
-interface Book {
-    id: string;
-    title: string;
-    categoryId: string;
-    description: string | null;
-    fileUrl: string;
-    thumbnailUrl: string | null;
-    createdAt: Date;
-    category: {
-        id: string;
-        name: string;
-    };
-}
+import { useRouter } from "next/navigation";
 
 interface BooksClientProps {
     initialBooks: any[];
-    categories: any[];
 }
 
-export function BooksClient({ initialBooks, categories }: BooksClientProps) {
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [selectedBook, setSelectedBook] = useState<any>(null);
-
-    const handleEdit = (book: any) => {
-        setSelectedBook(book);
-        setIsDialogOpen(true);
-    };
-
-    const handleCreate = () => {
-        setSelectedBook(null);
-        setIsDialogOpen(true);
-    };
+export function BooksClient({ initialBooks }: BooksClientProps) {
+    const router = useRouter();
 
     return (
         <div className="space-y-6">
@@ -51,21 +23,15 @@ export function BooksClient({ initialBooks, categories }: BooksClientProps) {
                         Manage your book library.
                     </p>
                 </div>
-                <Button onClick={handleCreate}>
+                <Button onClick={() => router.push("/admin/books/create")}>
                     <Plus className="mr-2 h-4 w-4" /> Add New
                 </Button>
             </div>
             <Separator />
             <DataTable
-                columns={columns({ onEdit: handleEdit })}
+                columns={columns}
                 data={initialBooks}
                 searchKey="title"
-            />
-            <BookDialog
-                open={isDialogOpen}
-                onOpenChange={setIsDialogOpen}
-                initialData={selectedBook}
-                categories={categories}
             />
         </div>
     );

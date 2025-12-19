@@ -123,7 +123,7 @@ export function BooksList({ books, savedBookIds: initialSavedBookIds, viewMode }
                                     </p>
 
                                     {userId ? (
-                                        <Button variant="secondary" size="sm" className="w-full gap-2" asChild>
+                                        <Button className="w-full" asChild>
                                             <Link href={`/books/${book.id}`}>
                                                 <Eye className="h-4 w-4" />
                                                 View
@@ -131,7 +131,7 @@ export function BooksList({ books, savedBookIds: initialSavedBookIds, viewMode }
                                         </Button>
                                     ) : (
                                         <SignInButton mode="modal">
-                                            <Button variant="secondary" size="sm" className="w-full gap-2">
+                                            <Button className="w-full">
                                                 <User className="h-4 w-4" />
                                                 Sign in to view
                                             </Button>

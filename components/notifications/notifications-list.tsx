@@ -106,7 +106,7 @@ export function NotificationsList({ notifications, types, selectedType }: Notifi
                                         )}
                                     </div>
                                     <p className="text-muted-foreground line-clamp-2 mb-3">
-                                        {notification.description}
+                                        {notification.description?.replace(/<[^>]*>?/gm, '') || ''}
                                     </p>
                                     <div className="flex flex-wrap items-center gap-4 text-sm">
                                         <div className="flex items-center gap-1.5 text-muted-foreground">
@@ -137,17 +137,12 @@ export function NotificationsList({ notifications, types, selectedType }: Notifi
                                 <div className="shrink-0">
                                     <Button
                                         className="gap-2"
-                                        disabled={isExpired}
                                         variant={isExpired ? "outline" : "default"}
-                                        asChild={!isExpired}
+                                        asChild
                                     >
-                                        {isExpired ? (
-                                            'Closed'
-                                        ) : (
-                                            <Link href={`/notifications/${notification.id}`}>
-                                                View Details
-                                            </Link>
-                                        )}
+                                        <Link href={`/notifications/${notification.id}`}>
+                                            {isExpired ? 'View Details (Closed)' : 'View Details'}
+                                        </Link>
                                     </Button>
                                 </div>
                             </div>

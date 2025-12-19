@@ -22,7 +22,7 @@ export default async function ExamPaperPage({ params }: ExamPaperPageProps) {
     }
 
     return (
-        <div className="container mx-auto py-8">
+        <div className="container mx-auto p-4">
             <Link href="/exam-papers" className="flex items-center text-muted-foreground hover:text-foreground mb-6 transition-colors">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Exam Papers

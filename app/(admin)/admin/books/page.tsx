@@ -1,7 +1,7 @@
 
 import { db } from "@/db";
 export const dynamic = 'force-dynamic';
-import { books, bookCategories } from "@/db/schema";
+import { books } from "@/db/schema";
 import { desc } from "drizzle-orm";
 import { BooksClient } from "./client";
 
@@ -14,13 +14,8 @@ async function getBooks() {
     });
 }
 
-async function getCategories() {
-    return await db.select().from(bookCategories).orderBy(desc(bookCategories.createdAt));
-}
-
 export default async function BooksPage() {
     const booksData = await getBooks();
-    const categoriesData = await getCategories();
 
-    return <BooksClient initialBooks={booksData} categories={categoriesData} />;
+    return <BooksClient initialBooks={booksData} />;
 }

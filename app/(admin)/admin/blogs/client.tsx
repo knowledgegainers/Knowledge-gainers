@@ -7,39 +7,30 @@ import { columns } from "./columns";
 import { Separator } from "@/components/ui/separator";
 import { useRouter } from "next/navigation";
 
-interface Result {
-    id: string;
-    title: string;
-    content: string;
-    imageUrl: string | null;
-    date: Date;
-    createdAt: Date;
+interface BlogsClientProps {
+    data: any[];
 }
 
-interface ClientProps {
-    initialData: Result[];
-}
-
-export function CurrentAffairsClient({ initialData }: ClientProps) {
+export function BlogsClient({ data }: BlogsClientProps) {
     const router = useRouter();
 
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight">Current Affairs</h2>
+                    <h2 className="text-3xl font-bold tracking-tight">Blogs</h2>
                     <p className="text-muted-foreground">
-                        Manage daily current affairs news.
+                        Manage your blog posts.
                     </p>
                 </div>
-                <Button onClick={() => router.push("/admin/current-affairs/create")}>
+                <Button onClick={() => router.push("/admin/blogs/create")}>
                     <Plus className="mr-2 h-4 w-4" /> Add New
                 </Button>
             </div>
             <Separator />
             <DataTable
                 columns={columns}
-                data={initialData}
+                data={data}
                 searchKey="title"
             />
         </div>

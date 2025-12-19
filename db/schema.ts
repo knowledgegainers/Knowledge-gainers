@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, integer, pgEnum, uuid, primaryKey } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, integer, pgEnum, uuid, primaryKey, boolean } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 // Book Categories table
@@ -118,6 +118,22 @@ export const contacts = pgTable("contacts", {
     subject: text("subject").notNull(),
     message: text("message").notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Blogs table
+export const blogs = pgTable("blogs", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    title: text("title").notNull(),
+    slug: text("slug").notNull().unique(),
+    content: text("content"),
+    excerpt: text("excerpt"),
+    imageUrl: text("image_url"),
+    isPublished: boolean("is_published").default(false).notNull(),
+    publishedAt: timestamp("published_at"),
+    category: text("category").notNull().default("General"),
+    author: text("author"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 // Relations
