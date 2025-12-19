@@ -52,9 +52,10 @@ export default async function ExamPaperPage({ params }: ExamPaperPageProps) {
 
                 <Separator className="my-8" />
 
-                <div className="py-2">
-                    <p className="text-lg text-muted-foreground whitespace-pre-wrap">{paper.description}</p>
-                </div>
+                <div
+                    className="prose prose-blue max-w-none prose-headings:font-bold prose-a:text-primary hover:prose-a:underline tiptap"
+                    dangerouslySetInnerHTML={{ __html: paper.description || "" }}
+                />
 
                 <Separator className="my-8" />
 
