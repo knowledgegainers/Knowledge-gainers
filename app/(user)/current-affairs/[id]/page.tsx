@@ -62,8 +62,8 @@ export default async function CurrentAffairPage({ params }: CurrentAffairPagePro
 
                 <div className="py-2">
                     <div
-
-                        dangerouslySetInnerHTML={{ __html: item.content }} // Assuming content could be HTML, if not just render as text
+                        className="prose dark:prose-invert max-w-none text-muted-foreground"
+                        dangerouslySetInnerHTML={{ __html: item.content }}
                     />
                 </div>
 

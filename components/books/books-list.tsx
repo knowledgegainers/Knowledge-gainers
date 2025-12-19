@@ -119,7 +119,7 @@ export function BooksList({ books, savedBookIds: initialSavedBookIds, viewMode }
                                         {book.title}
                                     </h3>
                                     <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-                                        {book.description}
+                                        {book.description?.replace(/<[^>]*>?/gm, '') || ''}
                                     </p>
 
                                     {userId ? (
@@ -187,7 +187,7 @@ export function BooksList({ books, savedBookIds: initialSavedBookIds, viewMode }
                                         <Badge>{book.category.name}</Badge>
                                     </div>
                                     <p className="text-muted-foreground mb-4 line-clamp-2">
-                                        {book.description}
+                                        {book.description?.replace(/<[^>]*>?/gm, '') || ''}
                                     </p>
                                     <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
 

@@ -12,15 +12,6 @@ interface CurrentAffairsListProps {
     posts: CurrentAffair[];
 }
 
-const categoryColors: Record<string, string> = {
-    "International": "bg-blue-500/10 text-blue-600 border-blue-200",
-    "Economy": "bg-green-500/10 text-green-600 border-green-200",
-    "Science & Tech": "bg-purple-500/10 text-purple-600 border-purple-200",
-    "Education": "bg-orange-500/10 text-orange-600 border-orange-200",
-    "Environment": "bg-emerald-500/10 text-emerald-600 border-emerald-200",
-    "Technology": "bg-cyan-500/10 text-cyan-600 border-cyan-200",
-};
-
 function formatDate(date: Date): string {
     return new Date(date).toLocaleDateString('en-US', {
         month: 'long',
@@ -65,9 +56,8 @@ export function CurrentAffairsList({ posts }: CurrentAffairsListProps) {
                         <h3 className="font-semibold text-xl mb-3 group-hover:text-primary transition-colors">
                             {post.title}
                         </h3>
-
                         <p className="text-muted-foreground mb-4 line-clamp-2">
-                            {post.content}
+                            {post.content?.replace(/<[^>]*>?/gm, '') || ''}
                         </p>
 
                         <div className="flex items-center justify-between">

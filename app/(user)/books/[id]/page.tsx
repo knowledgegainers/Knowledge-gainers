@@ -37,9 +37,10 @@ export default async function BookPage({ params }: BookPageProps) {
                 </div>
 
                 {book.description && (
-                    <div className="prose dark:prose-invert max-w-none text-muted-foreground">
-                        <p>{book.description}</p>
-                    </div>
+                    <div
+                        className="prose dark:prose-invert max-w-none text-muted-foreground"
+                        dangerouslySetInnerHTML={{ __html: book.description }}
+                    />
                 )}
 
                 <div className="space-y-4">
