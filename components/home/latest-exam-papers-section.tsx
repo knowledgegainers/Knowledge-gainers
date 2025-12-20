@@ -62,6 +62,9 @@ export async function LatestExamPapersSection() {
                             <h3 className="font-semibold text-lg mb-3 group-hover:text-primary transition-colors line-clamp-2">
                                 {paper.title}
                             </h3>
+                            <p className="text-sm text-muted-foreground line-clamp-2">
+                                {paper.description?.replace(/<[^>]+>/g, "") || "No description available"}
+                            </p>
 
                             <div className="flex items-center gap-4 text-sm text-muted-foreground mb-5">
                                 <div className="flex items-center gap-1.5">
@@ -74,11 +77,11 @@ export async function LatestExamPapersSection() {
                                 </div>
                             </div>
 
-                            <Button variant="secondary" size="sm" className="w-full gap-2 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors" asChild>
-                                <a href={paper.fileUrl} target="_blank" rel="noopener noreferrer">
+                            <Button className="w-full gap-2 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors" asChild>
+                                <Link href={`/exam-papers/${paper.id}`}>
                                     <Download className="h-4 w-4" />
-                                    Download Paper
-                                </a>
+                                    View Paper
+                                </Link>
                             </Button>
                         </div>
                     ))}

@@ -73,7 +73,7 @@ export async function LatestNotificationsSection() {
                                             )}
                                         </div>
                                         <p className="text-muted-foreground line-clamp-2 mb-3">
-                                            {notification.description}
+                                            {notification.description?.replace(/<[^>]+>/g, "")}
                                         </p>
                                         <div className="flex flex-wrap items-center gap-4 text-sm">
                                             <div className="flex items-center gap-1.5 text-muted-foreground">
@@ -94,10 +94,10 @@ export async function LatestNotificationsSection() {
                                     {/* Action */}
                                     <div className="shrink-0">
                                         <Button className="gap-2" asChild>
-                                            <a href={notification.applyLink || "#"} target="_blank" rel="noopener noreferrer">
-                                                Apply Now
+                                            <Link href={`/notifications/${notification.id}`}>
+                                                View Details
                                                 <ExternalLink className="h-4 w-4" />
-                                            </a>
+                                            </Link>
                                         </Button>
                                     </div>
                                 </div>

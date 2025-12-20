@@ -22,9 +22,8 @@ export function BookActionButton({ bookId }: BookActionButtonProps) {
 
     if (userId) {
         return (
-            <Button variant="secondary" size="sm" className="w-full gap-2" asChild>
+            <Button className="w-full gap-2" asChild>
                 <Link href={`/books/${bookId}`}>
-                    <Eye className="h-4 w-4" />
                     View
                 </Link>
             </Button>
@@ -33,7 +32,7 @@ export function BookActionButton({ bookId }: BookActionButtonProps) {
 
     return (
         <SignInButton mode="modal">
-            <Button variant="secondary" size="sm" className="w-full gap-2">
+            <Button>
                 <User className="h-4 w-4" />
                 Sign in to view
             </Button>

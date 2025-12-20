@@ -62,7 +62,7 @@ export default async function CurrentAffairPage({ params }: CurrentAffairPagePro
 
                 <div className="py-2">
                     <div
-                        className="prose dark:prose-invert max-w-none text-muted-foreground"
+                        className="prose max-w-none "
                         dangerouslySetInnerHTML={{ __html: item.content }}
                     />
                 </div>
@@ -71,7 +71,7 @@ export default async function CurrentAffairPage({ params }: CurrentAffairPagePro
                 {/* If content is known to be plain text, replace div above with: <p className="whitespace-pre-wrap">{item.content}</p> */}
                 {/* Assuming HTML based on notification pattern */}
 
-                <Separator className="my-8" />
+
             </div>
         </div>
     );
