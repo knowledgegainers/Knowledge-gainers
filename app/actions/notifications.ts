@@ -34,7 +34,10 @@ export async function getNotifications(search?: string, typeId?: string) {
     return data;
 }
 
+import { unstable_noStore as noStore } from "next/cache";
+
 export async function getLatestNotifications(limit: number = 4) {
+    noStore();
     return await db.query.notifications.findMany({
         with: {
             type: true,

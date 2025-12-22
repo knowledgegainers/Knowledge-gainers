@@ -56,6 +56,42 @@ export default async function BookPage({ params }: BookPageProps) {
                         </a>
                     </Button>
                 </div>
+
+            </div>
+
+            <div className="mt-8 rounded-xl bg-blue-500 p-6 text-center text-black">
+                <h3 className="mb-2 text-2xl font-bold text-white">
+                    Join our WhatsApp and Telegram Channels
+                </h3>
+                <p className="mb-6 font-medium text-white">
+                    Get Knowledge Gainers updates on our WhatsApp and Telegram Channels
+                </p>
+                <div className="mx-auto flex max-w-md flex-col gap-4 md:flex-row">
+                    <Button
+                        className="w-full bg-white text-black hover:bg-gray-200 border-none"
+                        asChild
+                    >
+                        <a
+                            href="https://whatsapp.com/channel/0029VafHWmfKrWQvDrF8P11L"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Join Our WhatsApp Channel
+                        </a>
+                    </Button>
+                    <Button
+                        className="w-full bg-white text-black hover:bg-gray-200 border-none"
+                        asChild
+                    >
+                        <a
+                            href="https://t.me/KNOWLEDGE_GAINERS"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Join Our Telegram Channel
+                        </a>
+                    </Button>
+                </div>
             </div>
         </div>
     );

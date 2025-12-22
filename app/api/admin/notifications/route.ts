@@ -1,8 +1,8 @@
-
 import { db } from "@/db";
 import { notifications } from "@/db/schema";
 import { desc } from "drizzle-orm";
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 
 export async function GET() {
     try {
@@ -34,6 +34,10 @@ export async function POST(req: Request) {
             applyLink,
             expiryDate: expiryDate ? new Date(expiryDate) : null,
         }).returning();
+
+        revalidatePath("/");
+        revalidatePath("/notifications");
+
         return NextResponse.json(data[0]);
     } catch (error) {
         return NextResponse.json({ error: "Failed to create notification" }, { status: 500 });

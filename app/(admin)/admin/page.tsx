@@ -1,6 +1,6 @@
 import { getDashboardStats } from "@/app/actions/dashboard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, Users, GraduationCap, Bell, Newspaper, Activity } from "lucide-react";
+import { BookOpen, Users, GraduationCap, Bell, Newspaper, Activity, FileText } from "lucide-react";
 
 export default async function AdminPage() {
     const stats = await getDashboardStats();
@@ -45,6 +45,14 @@ export default async function AdminPage() {
             description: "News and updates posts",
             color: "text-red-600",
             bgColor: "bg-red-100",
+        },
+        {
+            title: "Blogs",
+            value: stats.blogs,
+            icon: FileText,
+            description: "Published blog posts",
+            color: "text-orange-600",
+            bgColor: "bg-orange-100",
         },
     ];
 
