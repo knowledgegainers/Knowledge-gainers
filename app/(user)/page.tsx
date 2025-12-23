@@ -15,6 +15,8 @@ import { LatestBooksSection } from "@/components/home/latest-books-section";
 import { LatestExamPapersSection } from "@/components/home/latest-exam-papers-section";
 import { LatestNotificationsSection } from "@/components/home/latest-notifications-section";
 
+export const revalidate = 3600; // Revalidate every hour
+
 const features = [
   {
     icon: BookOpen,
