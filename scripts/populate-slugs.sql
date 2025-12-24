@@ -1,0 +1,2 @@
+-- Run this SQL to populate slugs for books without them
+-- UPDATE books SET slug = LOWER(REGEXP_REPLACE(REGEXP_REPLACE(REGEXP_REPLACE(TRIM(title), '\s+', '-', 'g'), '[^\w\-]+', '', 'g'), '\-\-+', '-', 'g')) WHERE slug IS NULL;

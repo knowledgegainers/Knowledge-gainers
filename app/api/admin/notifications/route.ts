@@ -3,6 +3,7 @@ import { notifications } from "@/db/schema";
 import { desc } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
+import { slugify } from "@/lib/utils";
 
 export async function GET() {
     try {
@@ -27,12 +28,15 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Title, Description, and Type are required" }, { status: 400 });
         }
 
+        const slug = slugify(title);
+
         const data = await db.insert(notifications).values({
             title,
             description,
             typeId,
             applyLink,
             expiryDate: expiryDate ? new Date(expiryDate) : null,
+            slug,
         }).returning();
 
         revalidatePath("/");

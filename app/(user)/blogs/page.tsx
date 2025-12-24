@@ -71,7 +71,7 @@ export default async function BlogsPage({
                                             )}
                                         </div>
                                         <h3 className="font-bold text-xl line-clamp-2 hover:text-primary transition-colors">
-                                            <Link href={`/blogs/${blog.id}`}>
+                                            <Link href={`/blogs/${blog.slug}`}>
                                                 {blog.title}
                                             </Link>
                                         </h3>
@@ -87,7 +87,7 @@ export default async function BlogsPage({
                                             {blog.author || "Admin"}
                                         </div>
                                         <Button variant="ghost" size="sm" asChild>
-                                            <Link href={`/blogs/${blog.id}`}>
+                                            <Link href={`/blogs/${blog.slug}`}>
                                                 Read More
                                             </Link>
                                         </Button>

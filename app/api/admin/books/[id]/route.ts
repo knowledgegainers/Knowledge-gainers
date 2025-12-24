@@ -4,20 +4,28 @@ import { books } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
+import { slugify } from "@/lib/utils";
+
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
         const { id } = await params;
         const body = await req.json();
         const { title, categoryId, description, fileUrl, thumbnailUrl } = body;
 
+        const updateData: any = {
+            title,
+            categoryId,
+            description,
+            fileUrl,
+            thumbnailUrl
+        };
+
+        if (title) {
+            updateData.slug = slugify(title);
+        }
+
         await db.update(books)
-            .set({
-                title,
-                categoryId,
-                description,
-                fileUrl,
-                thumbnailUrl
-            })
+            .set(updateData)
             .where(eq(books.id, id));
 
         return NextResponse.json({ message: "Book updated" });

@@ -30,7 +30,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Blogs
     const blogs = await getPublishedBlogs();
     const blogRoutes = blogs.map((blog) => ({
-        url: `${baseUrl}/blogs/${blog.id}`,
+        url: `${baseUrl}/blogs/${blog.slug}`,
         lastModified: new Date(blog.updatedAt || blog.publishedAt),
         changeFrequency: "weekly" as const,
         priority: 0.7,
@@ -39,7 +39,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Books
     const books = await getBooks();
     const bookRoutes = books.map((book) => ({
-        url: `${baseUrl}/books/${book.id}`,
+        url: `${baseUrl}/books/${book.slug}`,
         lastModified: new Date(book.createdAt),
         changeFrequency: "monthly" as const,
         priority: 0.6,
@@ -48,7 +48,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Exam Papers
     const examPapers = await getExamPapers();
     const examPaperRoutes = examPapers.map((paper) => ({
-        url: `${baseUrl}/exam-papers/${paper.id}`,
+        url: `${baseUrl}/exam-papers/${paper.slug}`,
         lastModified: new Date(paper.createdAt),
         changeFrequency: "monthly" as const,
         priority: 0.6,
@@ -57,7 +57,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Notifications
     const notifications = await getNotifications();
     const notificationRoutes = notifications.map((notification) => ({
-        url: `${baseUrl}/notifications/${notification.id}`,
+        url: `${baseUrl}/notifications/${notification.slug}`,
         lastModified: new Date(notification.createdAt),
         changeFrequency: "weekly" as const,
         priority: 0.7,
@@ -66,7 +66,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Current Affairs
     const currentAffairs = await getCurrentAffairs();
     const currentAffairRoutes = currentAffairs.map((item) => ({
-        url: `${baseUrl}/current-affairs/${item.id}`,
+        url: `${baseUrl}/current-affairs/${item.slug}`,
         lastModified: new Date(item.date),
         changeFrequency: "weekly" as const,
         priority: 0.6,

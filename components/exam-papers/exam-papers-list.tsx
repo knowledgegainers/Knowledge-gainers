@@ -71,7 +71,7 @@ export function ExamPapersList({ papers, types, selectedExamType, selectedYear }
                                 <span>{paper.year}</span>
                             </div>
                         </div>
-                        <Link href={`/exam-papers/${paper.id}`}>
+                        <Link href={`/exam-papers/${paper.slug}`}>
                             <Button className="w-full">
                                 View Details
                             </Button>

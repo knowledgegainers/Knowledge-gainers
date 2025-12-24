@@ -4,6 +4,8 @@ import { books } from "@/db/schema";
 import { desc, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
+import { slugify } from "@/lib/utils";
+
 export async function GET() {
     try {
         const data = await db.query.books.findMany({
@@ -27,8 +29,11 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Title, Category, and File URL are required" }, { status: 400 });
         }
 
+        const slug = slugify(title);
+
         const data = await db.insert(books).values({
             title,
+            slug,
             categoryId,
             description,
             fileUrl,

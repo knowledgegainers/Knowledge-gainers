@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { notifications } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
+import { slugify } from "@/lib/utils";
 
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
@@ -10,13 +11,16 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         const body = await req.json();
         const { title, description, typeId, applyLink, expiryDate } = body;
 
+        const slug = slugify(title);
+
         await db.update(notifications)
             .set({
                 title,
                 description,
                 typeId,
                 applyLink,
-                expiryDate: expiryDate ? new Date(expiryDate) : null
+                expiryDate: expiryDate ? new Date(expiryDate) : null,
+                slug,
             })
             .where(eq(notifications.id, id));
 

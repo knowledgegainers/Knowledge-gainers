@@ -1,56 +1,60 @@
-import { getNotificationById } from "@/app/actions/notifications";
+import { getCurrentAffairBySlug } from "@/app/actions/current-affairs";
 import { Button } from "@/components/ui/button";
-
 import { Separator } from "@/components/ui/separator";
-import { ExternalLink, Calendar, Tag, ArrowLeft } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, Calendar, Share2 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
-import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
 
-interface NotificationPageProps {
+interface CurrentAffairPageProps {
     params: Promise<{
-        id: string;
+        slug: string;
     }>;
 }
 
-export default async function NotificationPage({ params }: NotificationPageProps) {
+export default async function CurrentAffairPage({ params }: CurrentAffairPageProps) {
     const resolvedParams = await params;
-    const notification = await getNotificationById(resolvedParams.id);
+    const item = await getCurrentAffairBySlug(resolvedParams.slug);
 
-    if (!notification) {
+    if (!item) {
         notFound();
     }
 
-    const isExpired = notification.expiryDate ? new Date(notification.expiryDate) < new Date() : false;
-
     return (
-        <div className="container mx-auto py-8 px-4 md:px-6">
-            <Link href="/notifications" className="flex items-center text-muted-foreground hover:text-foreground mb-6 transition-colors">
+        <div className="container mx-auto p-4">
+            <Link href="/current-affairs" className="flex items-center text-muted-foreground hover:text-foreground mb-6 transition-colors">
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Notifications
+                Back to Current Affairs
             </Link>
 
             <div className="max-w-4xl mx-auto">
+                {item.imageUrl && (
+                    <div className="relative w-full h-[300px] md:h-[400px] mb-8 rounded-xl overflow-hidden shadow-md">
+                        <Image
+                            src={item.imageUrl}
+                            alt={item.title}
+                            fill
+                            className="object-cover"
+                            priority
+                        />
+                    </div>
+                )}
+
                 <div className="space-y-4 mb-8">
                     <div className="space-y-3">
                         <Badge variant="secondary" className="mb-2">
-                            {notification.type.name}
+                            {item.category}
                         </Badge>
-                        <h1 className="text-3xl md:text-4xl font-bold leading-tight text-foreground">{notification.title}</h1>
+                        <h1 className="text-3xl md:text-4xl font-bold leading-tight text-foreground">{item.title}</h1>
                     </div>
 
                     <div className="flex items-center gap-6 text-sm text-muted-foreground flex-wrap">
                         <div className="flex items-center gap-2">
                             <Calendar className="h-4 w-4" />
-                            <span>Posted on {format(new Date(notification.createdAt), "MMMM d, yyyy")}</span>
+                            <span>{format(new Date(item.date), "MMMM d, yyyy")}</span>
                         </div>
-                        {notification.expiryDate && (
-                            <div className={`flex items-center gap-2 ${isExpired ? "text-destructive font-medium" : ""}`}>
-                                <Tag className="h-4 w-4" />
-                                <span>Expires: {format(new Date(notification.expiryDate), "MMMM d, yyyy")}</span>
-                            </div>
-                        )}
                     </div>
                 </div>
 
@@ -58,30 +62,14 @@ export default async function NotificationPage({ params }: NotificationPageProps
 
                 <div className="py-2">
                     <div
-                        className="prose prose-blue max-w-none prose-headings:font-bold prose-a:text-primary hover:prose-a:underline tiptap"
-                        dangerouslySetInnerHTML={{ __html: notification.description }}
+                        className="prose max-w-none "
+                        dangerouslySetInnerHTML={{ __html: item.content }}
                     />
                 </div>
 
-                <Separator className="my-8" />
-
-                <div className="flex justify-end pt-4 pb-12">
-                    <Button
-                        size="lg"
-                        className="gap-2 min-w-[140px]"
-                        disabled={isExpired}
-                        asChild={!isExpired}
-                    >
-                        {isExpired ? (
-                            "Expired"
-                        ) : (
-                            <a href={notification.applyLink || "#"} target="_blank" rel="noopener noreferrer">
-                                Apply Now
-                                <ExternalLink className="h-4 w-4" />
-                            </a>
-                        )}
-                    </Button>
-                </div>
+                {/* Fallback if content is plain text and not HTML logic above handles both if well structured, but let's be safe if it's just text db field */}
+                {/* If content is known to be plain text, replace div above with: <p className="whitespace-pre-wrap">{item.content}</p> */}
+                {/* Assuming HTML based on notification pattern */}
 
                 <div className="mt-8 rounded-xl bg-blue-500 p-6 text-center text-black">
                     <h3 className="mb-2 text-2xl font-bold text-white">
@@ -117,7 +105,11 @@ export default async function NotificationPage({ params }: NotificationPageProps
                         </Button>
                     </div>
                 </div>
+
+
             </div>
+
+
         </div>
     );
 }

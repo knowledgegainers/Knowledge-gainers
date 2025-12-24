@@ -155,3 +155,14 @@ export async function getNotificationById(id: string) {
 
     return notification;
 }
+
+export async function getNotificationBySlug(slug: string) {
+    const notification = await db.query.notifications.findFirst({
+        where: eq(notifications.slug, slug),
+        with: {
+            type: true,
+        },
+    });
+
+    return notification;
+}

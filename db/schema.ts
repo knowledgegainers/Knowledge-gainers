@@ -47,6 +47,7 @@ export const books = pgTable("books", {
     description: text("description"),
     fileUrl: text("file_url").notNull(),
     thumbnailUrl: text("thumbnail_url"),
+    slug: text("slug").unique(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -58,6 +59,7 @@ export const examPapers = pgTable("exam_papers", {
     year: integer("year").notNull(),
     description: text("description"),
     fileUrl: text("file_url").notNull(),
+    slug: text("slug").unique(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -69,6 +71,7 @@ export const notifications = pgTable("notifications", {
     typeId: uuid("type_id").notNull().references(() => notificationTypes.id, { onDelete: "cascade" }),
     applyLink: text("apply_link"),
     expiryDate: timestamp("expiry_date"),
+    slug: text("slug").unique(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -80,6 +83,7 @@ export const currentAffairs = pgTable("current_affairs", {
     category: text("category").notNull().default("General"), // Added category column with default
     imageUrl: text("image_url"),
     date: timestamp("date").notNull(),
+    slug: text("slug").unique(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

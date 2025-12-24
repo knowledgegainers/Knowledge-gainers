@@ -6,10 +6,10 @@ import { Eye, User } from "lucide-react";
 import Link from "next/link";
 
 interface BookActionButtonProps {
-    bookId: string;
+    bookSlug: string;
 }
 
-export function BookActionButton({ bookId }: BookActionButtonProps) {
+export function BookActionButton({ bookSlug }: BookActionButtonProps) {
     const { userId, isLoaded } = useAuth();
 
     if (!isLoaded) {
@@ -23,7 +23,7 @@ export function BookActionButton({ bookId }: BookActionButtonProps) {
     if (userId) {
         return (
             <Button className="w-full gap-2" asChild>
-                <Link href={`/books/${bookId}`}>
+                <Link href={`/books/${bookSlug}`}>
                     View
                 </Link>
             </Button>

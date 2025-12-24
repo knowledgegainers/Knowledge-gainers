@@ -66,7 +66,7 @@ export function CurrentAffairsList({ posts }: CurrentAffairsListProps) {
                                 <span>{formatDate(post.date)}</span>
                             </div>
                             <Button variant="ghost" size="sm" className="gap-1 group-hover:text-primary" asChild>
-                                <Link href={`/current-affairs/${post.id}`}>
+                                <Link href={`/current-affairs/${post.slug}`}>
                                     Read More
                                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                                 </Link>

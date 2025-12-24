@@ -56,7 +56,7 @@ export async function LatestBooksSection() {
                                 <h3 className="font-semibold text-lg mb-2 line-clamp-2 group-hover:text-primary transition-colors">
                                     {book.title}
                                 </h3>
-                                <BookActionButton bookId={book.id} />
+                                <BookActionButton bookSlug={book.slug!} />
                             </div>
                         </div>
                     ))}

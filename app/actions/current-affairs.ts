@@ -53,3 +53,11 @@ export async function getCurrentAffairById(id: string) {
 
     return item;
 }
+
+export async function getCurrentAffairBySlug(slug: string) {
+    const item = await db.query.currentAffairs.findFirst({
+        where: eq(currentAffairs.slug, slug),
+    });
+
+    return item;
+}

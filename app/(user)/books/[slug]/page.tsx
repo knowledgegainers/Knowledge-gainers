@@ -1,4 +1,4 @@
-import { getBookById } from "@/app/actions/books";
+import { getBookBySlug } from "@/app/actions/books";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,13 +8,13 @@ import { PdfViewerWrapper } from "@/components/books/pdf-viewer-wrapper";
 
 interface BookPageProps {
     params: Promise<{
-        id: string;
+        slug: string;
     }>;
 }
 
 export default async function BookPage({ params }: BookPageProps) {
-    const { id } = await params;
-    const book = await getBookById(id);
+    const { slug } = await params;
+    const book = await getBookBySlug(slug);
 
     if (!book) {
         notFound();

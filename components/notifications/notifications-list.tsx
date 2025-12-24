@@ -140,7 +140,7 @@ export function NotificationsList({ notifications, types, selectedType }: Notifi
                                         variant={isExpired ? "outline" : "default"}
                                         asChild
                                     >
-                                        <Link href={`/notifications/${notification.id}`}>
+                                        <Link href={`/notifications/${notification.slug}`}>
                                             {isExpired ? 'View Details (Closed)' : 'View Details'}
                                         </Link>
                                     </Button>

@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { examPapers } from "@/db/schema";
 import { desc } from "drizzle-orm";
 import { NextResponse } from "next/server";
+import { slugify } from "@/lib/utils";
 
 export async function GET() {
     try {
@@ -27,8 +28,11 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Title, Type, Year, and File URL are required" }, { status: 400 });
         }
 
+        const slug = slugify(title);
+
         const data = await db.insert(examPapers).values({
             title,
+            slug,
             typeId,
             year: parseInt(year),
             description,

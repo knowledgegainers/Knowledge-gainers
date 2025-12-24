@@ -157,3 +157,14 @@ export async function getExamPaperById(id: string) {
 
     return paper;
 }
+
+export async function getExamPaperBySlug(slug: string) {
+    const paper = await db.query.examPapers.findFirst({
+        where: eq(examPapers.slug, slug),
+        with: {
+            type: true,
+        },
+    });
+
+    return paper;
+}

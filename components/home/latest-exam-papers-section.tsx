@@ -78,7 +78,7 @@ export async function LatestExamPapersSection() {
                             </div>
 
                             <Button className="w-full gap-2 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors" asChild>
-                                <Link href={`/exam-papers/${paper.id}`}>
+                                <Link href={`/exam-papers/${paper.slug}`}>
                                     <Download className="h-4 w-4" />
                                     View Paper
                                 </Link>

@@ -1,16 +1,48 @@
-import { getBlogById } from "@/app/actions/blogs";
+import { getBlogBySlug, getBlogBySlugDebug } from "@/app/actions/blogs";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, User, ArrowLeft, Clock } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-export default async function BlogDetailPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params;
-    const blog = await getBlogById(id);
+export default async function BlogDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug: rawSlug } = await params;
+    const slug = decodeURIComponent(rawSlug);
+    console.log("Blog Page Debug - Received slug:", slug);
+    const { blog, logs } = await getBlogBySlugDebug(slug);
+    console.log("Blog Page Debug - Blog found:", blog ? "Yes" : "No", blog?.id);
 
     if (!blog) {
-        notFound();
+        // Fetch all slugs for comparison
+        const { getAllBlogSlugs } = await import("@/app/actions/blogs");
+        const allSlugs = await getAllBlogSlugs();
+
+        return (
+            <div className="p-20 text-center">
+                <h1 className="text-2xl font-bold text-red-500">Blog Not Found</h1>
+                <p><strong>Raw Slug:</strong> "{rawSlug}"</p>
+                <p><strong>Decoded Slug:</strong> "{slug}"</p>
+                <p><strong>Length:</strong> {slug.length}</p>
+
+                <div className="mt-8 text-left max-w-2xl mx-auto">
+                    <h2 className="font-bold mb-2">Debug Logs:</h2>
+                    <pre className="bg-slate-100 p-4 rounded text-xs mb-4 overflow-auto">
+                        {logs.join("\n")}
+                    </pre>
+
+                    <h2 className="font-bold mb-2">Did you mean one of these?</h2>
+                    <div className="bg-slate-100 p-4 rounded text-xs max-h-60 overflow-auto">
+                        {allSlugs.map(s => (
+                            <div key={s} className="mb-1 border-b border-gray-200 pb-1">
+                                <span className={s === slug ? "text-green-600 font-bold" : ""}>{s}</span>
+                                <span className="text-gray-400 ml-2">({s.length})</span>
+                                {s === slug && <span className="text-green-600 font-bold ml-2"> MATCH!</span>}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     return (

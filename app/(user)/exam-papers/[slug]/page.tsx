@@ -1,4 +1,4 @@
-import { getExamPaperById } from "@/app/actions/exam-papers";
+import { getExamPaperBySlug } from "@/app/actions/exam-papers";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
@@ -9,13 +9,13 @@ import { format } from "date-fns";
 
 interface ExamPaperPageProps {
     params: Promise<{
-        id: string;
+        slug: string;
     }>;
 }
 
 export default async function ExamPaperPage({ params }: ExamPaperPageProps) {
     const resolvedParams = await params;
-    const paper = await getExamPaperById(resolvedParams.id);
+    const paper = await getExamPaperBySlug(resolvedParams.slug);
 
     if (!paper) {
         notFound();

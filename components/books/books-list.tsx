@@ -124,7 +124,7 @@ export function BooksList({ books, savedBookIds: initialSavedBookIds, viewMode }
 
                                     {userId ? (
                                         <Button className="w-full" asChild>
-                                            <Link href={`/books/${book.id}`}>
+                                            <Link href={`/books/${book.slug}`}>
                                                 <Eye className="h-4 w-4" />
                                                 View
                                             </Link>
@@ -198,7 +198,7 @@ export function BooksList({ books, savedBookIds: initialSavedBookIds, viewMode }
                                 <div className="shrink-0 self-end sm:self-center">
                                     {userId ? (
                                         <Button className="gap-2" asChild>
-                                            <Link href={`/books/${book.id}`}>
+                                            <Link href={`/books/${book.slug}`}>
                                                 <Eye className="h-4 w-4" />
                                                 View
                                             </Link>

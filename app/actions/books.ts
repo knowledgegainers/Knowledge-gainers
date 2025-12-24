@@ -53,6 +53,15 @@ export async function getBookById(id: string) {
     });
 }
 
+export async function getBookBySlug(slug: string) {
+    return await db.query.books.findFirst({
+        where: eq(books.slug, slug),
+        with: {
+            category: true,
+        },
+    });
+}
+
 export async function getBookCategories() {
     return await db.select().from(bookCategories).orderBy(desc(bookCategories.createdAt));
 }
