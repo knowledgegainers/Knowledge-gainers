@@ -21,7 +21,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://knowledgegainers.in"),
   title: {
-    default: "Knowledge Gainers - Engineering, EAPCET, Exam Papers & Notifications",
+    default: "Knowledge Gainers - Books, Exam Papers, Current Affairs & Notifications",
     template: "%s | Knowledge Gainers",
   },
   description:
