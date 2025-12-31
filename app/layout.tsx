@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 import { Toaster } from "@/components/ui/sonner";
 import { JsonLd } from "@/components/seo/json-ld";
+import Script from "next/script";
 
 import "./globals.css";
 
@@ -142,6 +143,19 @@ export default function RootLayout({
               },
             }}
           />
+          <Script
+            src="https://www.googletagmanager.com/gtag/js?id=G-6C8TGR54VL"
+            strategy="afterInteractive"
+          />
+          <Script id="google-analytics" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+
+              gtag('config', 'G-6C8TGR54VL');
+            `}
+          </Script>
           <main className="flex-1">{children}</main>
           <WhatsAppButton />
           <Toaster />
