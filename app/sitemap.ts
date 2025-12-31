@@ -18,11 +18,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         "/current-affairs",
         "/exam-papers",
         "/notifications",
+        "/privacy-policy",
+        "/terms-and-conditions",
+        "/disclaimer",
     ].map((route) => ({
         url: `${baseUrl}${route}`,
         lastModified: new Date(),
-        changeFrequency: "daily" as const,
-        priority: route === "" ? 1 : 0.8,
+        changeFrequency: route.startsWith("/privacy") || route.startsWith("/terms") || route.startsWith("/disclaimer") ? "monthly" as const : "daily" as const,
+        priority: route === "" ? 1 : route.startsWith("/privacy") || route.startsWith("/terms") || route.startsWith("/disclaimer") ? 0.5 : 0.8,
     }));
 
     // Dynamic routes

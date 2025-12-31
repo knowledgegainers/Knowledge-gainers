@@ -1,7 +1,7 @@
-import { getBlogBySlug, getBlogBySlugDebug } from "@/app/actions/blogs";
+import { getBlogBySlug, getBlogBySlugDebug, getAdjacentBlogs } from "@/app/actions/blogs";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, User, ArrowLeft, Clock } from "lucide-react";
+import { Calendar, User, ArrowLeft, Clock, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -11,6 +11,11 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
     console.log("Blog Page Debug - Received slug:", slug);
     const { blog, logs } = await getBlogBySlugDebug(slug);
     console.log("Blog Page Debug - Blog found:", blog ? "Yes" : "No", blog?.id);
+
+    // Fetch adjacent blogs for navigation
+    const { previousBlog, nextBlog } = blog
+        ? await getAdjacentBlogs(blog.id, blog.publishedAt)
+        : { previousBlog: null, nextBlog: null };
 
     if (!blog) {
         // Fetch all slugs for comparison
@@ -105,6 +110,75 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                     className="prose max-w-none bg-background p-0 md:p-8 rounded-xl"
                     dangerouslySetInnerHTML={{ __html: blog.content || "" }}
                 />
+
+
+
+                {/* Previous/Next Post Navigation */}
+                {(previousBlog || nextBlog) && (
+                    <div className="mt-12 pt-8 border-t border-border">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Previous Post */}
+                            {previousBlog ? (
+                                <Link
+                                    href={`/blogs/${previousBlog.slug}`}
+                                    className="group flex flex-col p-6 rounded-xl bg-muted hover:bg-accent transition-all duration-300 border border-border hover:border-primary"
+                                >
+                                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
+                                        <ArrowLeft className="h-4 w-4" />
+                                        <span className="font-medium">Previous Post</span>
+                                    </div>
+                                    <div className="flex gap-4">
+                                        {previousBlog.imageUrl && (
+                                            <div className="flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden">
+                                                <img
+                                                    src={previousBlog.imageUrl}
+                                                    alt={previousBlog.title}
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                                />
+                                            </div>
+                                        )}
+                                        <div className="flex-1 min-w-0">
+                                            <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                                                {previousBlog.title}
+                                            </h3>
+                                        </div>
+                                    </div>
+                                </Link>
+                            ) : (
+                                <div className="hidden md:block" />
+                            )}
+
+                            {/* Next Post */}
+                            {nextBlog && (
+                                <Link
+                                    href={`/blogs/${nextBlog.slug}`}
+                                    className="group flex flex-col p-6 rounded-xl bg-muted hover:bg-accent transition-all duration-300 border border-border hover:border-primary"
+                                >
+                                    <div className="flex items-center justify-end gap-2 text-sm text-muted-foreground mb-3">
+                                        <span className="font-medium">Next Post</span>
+                                        <ArrowRight className="h-4 w-4" />
+                                    </div>
+                                    <div className="flex gap-4 flex-row-reverse">
+                                        {nextBlog.imageUrl && (
+                                            <div className="flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden">
+                                                <img
+                                                    src={nextBlog.imageUrl}
+                                                    alt={nextBlog.title}
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                                />
+                                            </div>
+                                        )}
+                                        <div className="flex-1 min-w-0 text-right">
+                                            <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                                                {nextBlog.title}
+                                            </h3>
+                                        </div>
+                                    </div>
+                                </Link>
+                            )}
+                        </div>
+                    </div>
+                )}
 
                 <div className="mt-8 rounded-xl bg-blue-500 p-6 text-center text-black">
                     <h3 className="mb-2 text-2xl font-bold text-white">

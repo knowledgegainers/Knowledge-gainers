@@ -20,14 +20,19 @@ const footerLinks = {
         { label: "Current Affairs", href: "/current-affairs" },
     ],
     categories: [
-        { label: "Job Books", href: "/books?category=job-books" },
-        { label: "Engineering", href: "/books?category=engineering" },
-        { label: "General Knowledge", href: "/books?category=gk" },
-        { label: "Current Affairs", href: "/books?category=current-affairs" },
+        { label: "Spiritual Books", href: "/books?category=2c89d296-c015-4ecf-a772-3b34a7e1c6d2" },
+        { label: "Engineering Books", href: "/books?category=6ce31410-55d4-4004-99e6-27bcfa5ff462" },
+        { label: "GK Books", href: "/books?category=03839ae8-1116-4fc8-85c9-769cfea326d8" },
+        { label: "Inspiration Books", href: "/books?category=9edd3ec0-421e-467c-9fd9-301238902914" },
     ],
     company: [
         { label: "About Us", href: "/about" },
         { label: "Contact", href: "/contact" },
+    ],
+    legal: [
+        { label: "Privacy Policy", href: "/privacy-policy" },
+        { label: "Terms & Conditions", href: "/terms-and-conditions" },
+        { label: "Disclaimer", href: "/disclaimer" },
     ],
 };
 
@@ -63,7 +68,7 @@ export function Footer() {
 
             {/* Main Footer */}
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 lg:gap-12">
                     {/* Brand */}
                     <div className="lg:col-span-2">
                         <Link href="/" className="flex items-center gap-2 mb-4">
@@ -177,6 +182,23 @@ export function Footer() {
                             ))}
                         </ul>
                     </div>
+
+                    {/* Legal */}
+                    <div>
+                        <h4 className="font-semibold mb-4">Legal</h4>
+                        <ul className="space-y-3">
+                            {footerLinks.legal.map((link) => (
+                                <li key={link.href}>
+                                    <Link
+                                        href={link.href}
+                                        className="text-muted-foreground hover:text-primary transition-colors"
+                                    >
+                                        {link.label}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
             </div>
 
@@ -188,11 +210,14 @@ export function Footer() {
                             © {new Date().getFullYear()} Knowledge Gainers. All rights reserved.
                         </p>
                         <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                            <Link href="/about" className="hover:text-primary transition-colors">
-                                About
+                            <Link href="/privacy-policy" className="hover:text-primary transition-colors">
+                                Privacy Policy
                             </Link>
-                            <Link href="/contact" className="hover:text-primary transition-colors">
-                                Contact
+                            <Link href="/terms-and-conditions" className="hover:text-primary transition-colors">
+                                Terms
+                            </Link>
+                            <Link href="/disclaimer" className="hover:text-primary transition-colors">
+                                Disclaimer
                             </Link>
                         </div>
                     </div>

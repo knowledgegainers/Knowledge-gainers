@@ -109,7 +109,7 @@ export default function ContactPage() {
                                 </div>
                                 <div>
                                     <p className="font-medium">Email</p>
-                                    <p className="text-sm text-muted-foreground">support@knowledgegainers.com</p>
+                                    <p className="text-sm text-muted-foreground">knowledgegainersteam20@gmail.com</p>
                                 </div>
                             </div>
 
@@ -119,7 +119,7 @@ export default function ContactPage() {
                                 </div>
                                 <div>
                                     <p className="font-medium">Phone</p>
-                                    <p className="text-sm text-muted-foreground">+91 12345 67890</p>
+                                    <p className="text-sm text-muted-foreground">+91 7207517297</p>
                                 </div>
                             </div>
 
@@ -130,8 +130,7 @@ export default function ContactPage() {
                                 <div>
                                     <p className="font-medium">Address</p>
                                     <p className="text-sm text-muted-foreground">
-                                        123 Education Street,<br />
-                                        Knowledge City, India
+                                        Srikakulam, Andhra Pradesh, India
                                     </p>
                                 </div>
                             </div>

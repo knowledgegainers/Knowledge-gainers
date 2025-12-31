@@ -2,7 +2,7 @@
 
 import { db } from "@/db";
 import { blogs } from "@/db/schema";
-import { eq, desc, and, ilike, or } from "drizzle-orm";
+import { eq, desc, and, ilike, or, lt, gt, asc } from "drizzle-orm";
 
 export type Blog = typeof blogs.$inferSelect;
 
@@ -80,4 +80,42 @@ export async function getAllBlogSlugs() {
         }
     });
     return all.map(b => b.slug);
+}
+
+export async function getAdjacentBlogs(currentBlogId: string, currentPublishedAt: Date | null) {
+    if (!currentPublishedAt) {
+        return { previousBlog: null, nextBlog: null };
+    }
+
+    // Get the previous blog (older, published before current)
+    const previousBlog = await db.query.blogs.findFirst({
+        where: and(
+            eq(blogs.isPublished, true),
+            lt(blogs.publishedAt, currentPublishedAt)
+        ),
+        orderBy: desc(blogs.publishedAt), // Get the most recent older post
+        columns: {
+            id: true,
+            slug: true,
+            title: true,
+            imageUrl: true,
+        }
+    });
+
+    // Get the next blog (newer, published after current)
+    const nextBlog = await db.query.blogs.findFirst({
+        where: and(
+            eq(blogs.isPublished, true),
+            gt(blogs.publishedAt, currentPublishedAt)
+        ),
+        orderBy: asc(blogs.publishedAt), // Get the oldest newer post
+        columns: {
+            id: true,
+            slug: true,
+            title: true,
+            imageUrl: true,
+        }
+    });
+
+    return { previousBlog, nextBlog };
 }
