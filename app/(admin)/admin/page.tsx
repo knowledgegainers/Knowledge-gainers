@@ -54,6 +54,25 @@ export default async function AdminPage() {
             color: "text-orange-600",
             bgColor: "bg-orange-100",
         },
+        {
+            title:"Mock Tests",
+            value: stats.mockTests,
+            icon: Activity,
+            description: "Active mock tests",
+            color: "text-teal-600",
+            bgColor: "bg-teal-100",
+        },
+        {
+            title: "Weekly Mock",
+            value: stats.weeklyMockTest ? stats.weeklyMockTest.title : "None",
+            icon: Activity,
+            description: stats.weeklyMockTest
+                ? `Scheduled: ${new Date(stats.weeklyMockTest.scheduledDate ?? new Date()).toLocaleDateString()}`
+                : "No active weekly mock test",
+            color: "text-indigo-600",
+            bgColor: "bg-indigo-100",
+            isStringValue: true,
+        }
     ];
 
     return (

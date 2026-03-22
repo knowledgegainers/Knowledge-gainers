@@ -10,7 +10,8 @@ import {
     LogOut,
     Library,
     User,
-    Mail
+    Mail,
+    Activity
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -51,6 +52,11 @@ const sidebarItems = [
         title: "Blogs",
         href: "/admin/blogs",
         icon: Newspaper,
+    },
+    {
+        title: "Mock Tests",
+        href: "/admin/mock-test",
+        icon: Activity,
     },
     {
         title: "Contact",

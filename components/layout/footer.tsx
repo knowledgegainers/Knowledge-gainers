@@ -38,7 +38,7 @@ const footerLinks = {
 
 export function Footer() {
     return (
-        <footer className="bg-card border-t border-border">
+        <footer data-footer className="bg-card border-t border-border">
             {/* Newsletter Section */}
             {/*
             <div className="border-b border-border">

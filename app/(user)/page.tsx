@@ -10,6 +10,7 @@ import {
   Users,
   Award,
   ArrowRight,
+  Trophy,
 } from "lucide-react";
 import { LatestBooksSection } from "@/components/home/latest-books-section";
 import { LatestExamPapersSection } from "@/components/home/latest-exam-papers-section";
@@ -79,12 +80,21 @@ export default function Home() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/books">
+              <Link href="/resources">
                 <Button size="lg" variant="default" className="gap-2 text-base">
                   Explore Resources
                   <ArrowRight className="h-5 w-5" />
                 </Button>
               </Link>
+              {/* Mock test Secondary CTA */}
+              <Link href="/mock-tests">
+                <Button size="lg" variant="green" className="gap-2 text-base">
+                  Take Mock Test
+                  <ArrowRight className="h-5 w-5" />
+                </Button>
+              </Link>
+
+              {/* About Us CTA */}
               <Link href="/about">
                 <Button size="lg" variant="outline" className="gap-2 text-base">
                   About Us
@@ -135,6 +145,27 @@ export default function Home() {
 
       {/* Latest Notifications Section */}
       <LatestNotificationsSection />
+
+      {/* Mock Test Banner */}
+      <section className="py-12 bg-gradient-to-r from-green-500/10 to-blue-500/10 border-y border-border/50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 text-green-600 mb-4">
+              <Trophy className="h-4 w-4" />
+              <span className="text-sm font-medium">🚀 Weekly Mock Test is Live!</span>
+            </div>
+            <p className="text-muted-foreground mb-6">
+              Challenge yourself with our weekly mock test and track your progress
+            </p>
+            <Link href="/mock-tests">
+              <Button className="gap-2 bg-green-600 hover:bg-green-700">
+                Take Mock Test
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
 
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-br from-primary/5 to-secondary/5 border-t border-border/50">

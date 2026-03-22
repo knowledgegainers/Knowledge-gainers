@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, integer, pgEnum, uuid, primaryKey, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, integer, pgEnum, uuid, primaryKey, boolean, uniqueIndex } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 // Book Categories table
@@ -140,11 +140,55 @@ export const blogs = pgTable("blogs", {
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// Mock Tests table
+export const mockTests = pgTable("mock_tests", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    title: text("title").notNull(),
+    slug: text("slug").notNull().unique(),
+    description: text("description"),
+    duration: integer("duration").notNull(), // in minutes
+    totalQuestions: integer("total_questions").notNull(),
+    difficulty: text("difficulty").notNull().default("Medium"),
+    isActive: boolean("is_active").default(false).notNull(),
+    scheduledDate: timestamp("scheduled_date"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Mock Test Questions table
+export const mockTestQuestions = pgTable("mock_test_questions", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    testId: uuid("test_id").notNull().references(() => mockTests.id, { onDelete: "cascade" }),
+    question: text("question").notNull(),
+    options: text("options").array().notNull(), // array of 4 options
+    correctAnswer: integer("correct_answer").notNull(), // index of correct answer (0-3)
+    explanation: text("explanation"),
+    order: integer("order").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Mock Test Attempts table
+export const mockTestAttempts = pgTable("mock_test_attempts", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    testId: uuid("test_id").notNull().references(() => mockTests.id, { onDelete: "cascade" }),
+    score: integer("score"), // percentage
+    totalCorrect: integer("total_correct"),
+    totalAttempted: integer("total_attempted"),
+    timeTaken: integer("time_taken"), // in seconds
+    completedAt: timestamp("completed_at"),
+    startedAt: timestamp("started_at").defaultNow().notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+    uniqueAttempt: uniqueIndex("unique_user_test_attempt").on(table.userId, table.testId),
+}));
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
     savedBooks: many(savedBooks),
     savedNotifications: many(savedNotifications),
     savedExamPapers: many(savedExamPapers),
+    mockTestAttempts: many(mockTestAttempts),
 }));
 
 export const bookCategoriesRelations = relations(bookCategories, ({ many }) => ({
@@ -213,5 +257,29 @@ export const savedExamPapersRelations = relations(savedExamPapers, ({ one }) => 
     paper: one(examPapers, {
         fields: [savedExamPapers.paperId],
         references: [examPapers.id],
+    }),
+}));
+
+// Mock Tests Relations
+export const mockTestsRelations = relations(mockTests, ({ many }) => ({
+    attempts: many(mockTestAttempts),
+    questions: many(mockTestQuestions),
+}));
+
+export const mockTestQuestionsRelations = relations(mockTestQuestions, ({ one }) => ({
+    test: one(mockTests, {
+        fields: [mockTestQuestions.testId],
+        references: [mockTests.id],
+    }),
+}));
+
+export const mockTestAttemptsRelations = relations(mockTestAttempts, ({ one }) => ({
+    user: one(users, {
+        fields: [mockTestAttempts.userId],
+        references: [users.id],
+    }),
+    test: one(mockTests, {
+        fields: [mockTestAttempts.testId],
+        references: [mockTests.id],
     }),
 }));

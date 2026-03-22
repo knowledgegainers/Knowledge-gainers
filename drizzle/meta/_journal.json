@@ -8,6 +8,20 @@
       "when": 1765706543723,
       "tag": "0000_empty_human_cannonball",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1774166090262,
+      "tag": "0001_red_whizzer",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1774171571933,
+      "tag": "0002_stale_nightcrawler",
+      "breakpoints": true
     }
   ]
 }
