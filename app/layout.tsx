@@ -49,6 +49,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
+  other: {
+    "google-adsense-account": "ca-pub-8919087688586498",
+  },
   openGraph: {
     title: "Knowledge Gainers - Learn, Prepare, Succeed",
     description:
@@ -156,6 +159,12 @@ export default function RootLayout({
               gtag('config', 'G-6C8TGR54VL');
             `}
           </Script>
+          <Script
+            async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8919087688586498"
+            crossOrigin="anonymous"
+            strategy="afterInteractive"
+          />
           <main className="flex-1">{children}</main>
           <WhatsAppButton />
           <Toaster />
