@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, integer, pgEnum, uuid, primaryKey, boolean, uniqueIndex } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, integer, pgEnum, uuid, primaryKey, boolean, uniqueIndex, real } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 // Book Categories table
@@ -149,6 +149,7 @@ export const mockTests = pgTable("mock_tests", {
     duration: integer("duration").notNull(), // in minutes
     totalQuestions: integer("total_questions").notNull(),
     difficulty: text("difficulty").notNull().default("Medium"),
+    displayMode: text("display_mode").notNull().default("single"),
     isActive: boolean("is_active").default(false).notNull(),
     scheduledDate: timestamp("scheduled_date"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -163,6 +164,9 @@ export const mockTestQuestions = pgTable("mock_test_questions", {
     options: text("options").array().notNull(), // array of 4 options
     correctAnswer: integer("correct_answer").notNull(), // index of correct answer (0-3)
     explanation: text("explanation"),
+    imageUrl: text("image_url"),
+    marks: integer("marks").notNull().default(1),
+    negativeMarks: real("negative_marks").notNull().default(0),
     order: integer("order").notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
 });

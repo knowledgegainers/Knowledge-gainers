@@ -1,11 +1,23 @@
-//coming soon
-import { TestTube, Clock, Target, Award, CheckCircle, Sparkles } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { TestTube, Clock, Target, Award, CheckCircle, Sparkles, BookOpen, Key, Calendar } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { db } from "@/db";
+import { mockTests } from "@/db/schema";
+import { eq } from "drizzle-orm";
+import { format } from "date-fns";
 
-export default function MockTestsPage() {
+export const dynamic = 'force-dynamic';
+
+export default async function MockTestsPage() {
+    const activeTests = await db.query.mockTests.findMany({
+        where: eq(mockTests.isActive, true),
+        orderBy: (mockTests, { desc }) => [desc(mockTests.createdAt)],
+    });
+
     return (
         <div className="container mx-auto py-12 px-4">
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-6xl mx-auto">
                 {/* Header Section */}
                 <div className="text-center mb-12">
                     <div className="flex justify-center mb-6">
@@ -22,81 +34,69 @@ export default function MockTestsPage() {
                     </p>
                 </div>
 
-                {/* Coming Soon Card */}
-                <Card className="mb-8 border-dashed border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-blue-50/50">
-                    <CardHeader className="text-center pb-4">
-                        <div className="flex justify-center mb-4">
-                            <Clock className="h-12 w-12 text-primary animate-bounce" />
-                        </div>
-                        <CardTitle className="text-2xl text-primary">Coming Soon!</CardTitle>
-                        <CardDescription className="text-lg">
-                            We're working hard to bring you the best mock testing experience. Stay tuned for weekly assessments that will help you excel in your exams.
-                        </CardDescription>
-                    </CardHeader>
-                </Card>
-
-                {/* Features Grid */}
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                    <Card className="hover:shadow-lg transition-shadow">
-                        <CardHeader>
-                            <div className="flex items-center space-x-3">
-                                <Target className="h-8 w-8 text-green-600" />
-                                <CardTitle className="text-lg">Comprehensive Coverage</CardTitle>
+                {activeTests.length === 0 ? (
+                    <Card className="mb-8 border-dashed border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-blue-50/50">
+                        <CardHeader className="text-center pb-4">
+                            <div className="flex justify-center mb-4">
+                                <Clock className="h-12 w-12 text-primary animate-bounce" />
                             </div>
-                        </CardHeader>
-                        <CardContent>
-                            <CardDescription>
-                                Tests covering all major topics and subjects to ensure thorough preparation.
+                            <CardTitle className="text-2xl text-primary">Coming Soon!</CardTitle>
+                            <CardDescription className="text-lg">
+                                We are currently preparing new mock tests for you. Check back later!
                             </CardDescription>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="hover:shadow-lg transition-shadow">
-                        <CardHeader>
-                            <div className="flex items-center space-x-3">
-                                <CheckCircle className="h-8 w-8 text-blue-600" />
-                                <CardTitle className="text-lg">Instant Results</CardTitle>
-                            </div>
                         </CardHeader>
-                        <CardContent>
-                            <CardDescription>
-                                Get immediate feedback with detailed explanations for each question.
-                            </CardDescription>
-                        </CardContent>
                     </Card>
-
-                    <Card className="hover:shadow-lg transition-shadow">
-                        <CardHeader>
-                            <div className="flex items-center space-x-3">
-                                <Award className="h-8 w-8 text-purple-600" />
-                                <CardTitle className="text-lg">Performance Tracking</CardTitle>
-                            </div>
-                        </CardHeader>
-                        <CardContent>
-                            <CardDescription>
-                                Track your progress over time with detailed analytics and improvement insights.
-                            </CardDescription>
-                        </CardContent>
-                    </Card>
-                </div>
-
-                {/* Additional Info */}
-                <Card className="bg-muted/50">
-                    <CardContent className="pt-6">
-                        <div className="text-center">
-                            <h3 className="text-lg font-semibold mb-2">What to Expect</h3>
-                            <p className="text-muted-foreground mb-4">
-                                Our mock tests will include multiple-choice questions, time-bound assessments, and comprehensive result analysis to help you identify strengths and areas for improvement.
-                            </p>
-                            <div className="flex flex-wrap justify-center gap-2 text-sm">
-                                <span className="px-3 py-1 bg-primary/10 text-primary rounded-full">Weekly Tests</span>
-                                <span className="px-3 py-1 bg-primary/10 text-primary rounded-full">Timed Assessments</span>
-                                <span className="px-3 py-1 bg-primary/10 text-primary rounded-full">Detailed Analytics</span>
-                                <span className="px-3 py-1 bg-primary/10 text-primary rounded-full">Progress Tracking</span>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
+                ) : (
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                        {activeTests.map((test) => (
+                            <Card key={test.id} className="hover:shadow-xl transition-all duration-300 flex flex-col group border-primary/10 hover:border-primary/30">
+                                <CardHeader>
+                                    <div className="flex justify-between items-start mb-2">
+                                        <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary group-hover:text-white transition-colors">
+                                            <BookOpen className="w-6 h-6" />
+                                        </div>
+                                        <span className="text-xs font-medium px-2 py-1 bg-muted rounded-full text-muted-foreground flex items-center">
+                                            <Calendar className="w-3 h-3 mr-1" />
+                                            {format(new Date(test.createdAt), "MMM d, yyyy")}
+                                        </span>
+                                    </div>
+                                    <CardTitle className="text-xl line-clamp-1">{test.title}</CardTitle>
+                                    <CardDescription className="line-clamp-2 mt-2">
+                                        {test.description || "Take this mock test to evaluate your skills."}
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="flex-grow">
+                                    <div className="grid grid-cols-2 gap-4 text-sm mt-2">
+                                        <div className="flex items-center text-muted-foreground bg-muted/50 p-2 rounded-md">
+                                            <Clock className="w-4 h-4 mr-2 text-blue-500" />
+                                            <span className="font-semibold text-foreground mr-1">{test.duration}</span> mins
+                                        </div>
+                                        <div className="flex items-center text-muted-foreground bg-muted/50 p-2 rounded-md">
+                                            <Target className="w-4 h-4 mr-2 text-green-500" />
+                                            <span className="font-semibold text-foreground mr-1">{test.totalQuestions}</span> Qs
+                                        </div>
+                                    </div>
+                                    <div className="mt-4 flex items-center justify-between text-sm">
+                                        <span className="flex items-center text-muted-foreground">
+                                            <Award className="w-4 h-4 mr-1 text-purple-500" />
+                                            Level:
+                                        </span>
+                                        <span className="font-medium px-2 py-0.5 rounded text-xs bg-primary/10 text-primary uppercase">
+                                            {test.difficulty}
+                                        </span>
+                                    </div>
+                                </CardContent>
+                                <CardFooter className="pt-4 border-t">
+                                    <Button asChild className="w-full group-hover:bg-primary">
+                                        <Link href={`/mock-tests/${test.slug}`}>
+                                            View Details
+                                        </Link>
+                                    </Button>
+                                </CardFooter>
+                            </Card>
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     );
