@@ -6,10 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { AlertCircle, Clock, ChevronLeft, ChevronRight, CheckCircle2, AlertTriangle, Maximize, XCircle } from "lucide-react";
+import { AlertCircle, Clock, ChevronLeft, ChevronRight, CheckCircle2, AlertTriangle, Maximize, XCircle, Download } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import Link from "next/link";
 import { toast } from "sonner";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 interface TestTakerProps {
     test: any;
@@ -177,6 +179,79 @@ export function TestTaker({ test, initialQuestions }: TestTakerProps) {
         );
     }
 
+    const handleDownloadPDF = () => {
+        const results = calculateResults();
+        const doc = new jsPDF();
+        const pageWidth = doc.internal.pageSize.width;
+
+        // Header
+        doc.setFontSize(20);
+        doc.setTextColor(40);
+        doc.text("Mock Test Results", pageWidth / 2, 15, { align: "center" });
+        
+        doc.setFontSize(14);
+        doc.text(test.title, pageWidth / 2, 25, { align: "center" });
+
+        // Summary Table
+        autoTable(doc, {
+            startY: 35,
+            head: [['Metric', 'Value']],
+            body: [
+                ['Score', `${results.score.toFixed(1)}%`],
+                ['Marks Obtained', `${results.marks} / ${results.totalMarks}`],
+                ['Correct Answers', results.correct.toString()],
+                ['Incorrect Answers', results.incorrect.toString()],
+                ['Attempted', results.attempted.toString()],
+                ['Skipped', results.skipped.toString()],
+            ],
+            theme: 'striped',
+            headStyles: { fillColor: [63, 81, 181] }
+        });
+
+        // Questions Section
+        doc.setFontSize(16);
+        doc.text("Detailed Question Review", 14, (doc as any).lastAutoTable.finalY + 15);
+
+        const questionData = activeQuestions.map((q, idx) => {
+            const userAnswer = answers[q.id];
+            const isSkipped = userAnswer === undefined;
+            const correctOpt = q.options[q.correctAnswer];
+            const userOpt = isSkipped ? "Skipped" : q.options[parseInt(userAnswer)];
+            
+            return [
+                `${idx + 1}`,
+                q.question,
+                `Correct: ${String.fromCharCode(65 + q.correctAnswer)}) ${correctOpt}\nYour Answer: ${isSkipped ? "Skipped" : String.fromCharCode(65 + parseInt(userAnswer)) + ") " + userOpt}\n\nExplanation: ${q.explanation || "No explanation provided."}`
+            ];
+        });
+
+        autoTable(doc, {
+            startY: (doc as any).lastAutoTable.finalY + 20,
+            head: [['#', 'Question', 'Details']],
+            body: questionData,
+            columnStyles: {
+                0: { cellWidth: 10 },
+                1: { cellWidth: 80 },
+                2: { cellWidth: 90 }
+            },
+            styles: { fontSize: 10, overflow: 'linebreak' },
+            headStyles: { fillColor: [63, 81, 181] },
+            didDrawPage: (data) => {
+                // Add footer with page number
+                doc.setFontSize(8);
+                doc.text(
+                    `Page ${data.pageNumber}`,
+                    pageWidth / 2,
+                    doc.internal.pageSize.height - 10,
+                    { align: "center" }
+                );
+            }
+        });
+
+        doc.save(`${test.title.replace(/\s+/g, '_')}_Results.pdf`);
+        toast.success("PDF Downloaded successfully!");
+    };
+
     // Results Dashboard
     if (isCompleted) {
         const results = calculateResults();
@@ -208,6 +283,13 @@ export function TestTaker({ test, initialQuestions }: TestTakerProps) {
                         <p className="text-xs font-medium text-muted-foreground mb-1">Skipped / Wrong</p>
                         <p className="text-2xl font-bold text-red-600 dark:text-red-400">{results.skipped} / {results.incorrect}</p>
                         <p className="text-[10px] text-muted-foreground mt-1">Questions</p>
+                    </Card>
+                    <Card 
+                        className="bg-green-600 hover:bg-green-700 text-white flex flex-col items-center justify-center p-4 text-center cursor-pointer transition-colors shadow-lg"
+                        onClick={handleDownloadPDF}
+                    >
+                        <Download className="h-6 w-6 mb-1" />
+                        <p className="text-xs font-bold">Download PDF</p>
                     </Card>
                 </div>
 
@@ -301,8 +383,12 @@ export function TestTaker({ test, initialQuestions }: TestTakerProps) {
                     })}
                 </div>
                 
-                <div className="flex justify-center pt-8 pb-16">
-                    <Button asChild size="lg">
+                <div className="flex flex-col sm:flex-row justify-center items-center gap-4 pt-8 pb-16">
+                    <Button variant="outline" size="lg" className="w-full sm:w-auto gap-2" onClick={handleDownloadPDF}>
+                        <Download className="h-4 w-4" />
+                        Download Results PDF
+                    </Button>
+                    <Button asChild size="lg" className="w-full sm:w-auto">
                         <Link href="/mock-tests">Return to Mock Tests</Link>
                     </Button>
                 </div>

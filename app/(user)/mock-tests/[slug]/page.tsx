@@ -64,6 +64,10 @@ export default async function MockTestPreviewPage({ params }: { params: Promise<
                                         <CheckCircle2 className="mr-2 h-5 w-5 text-green-600 shrink-0 mt-0.5" />
                                         <span><strong>Immediate Results:</strong> Upon submission, you can immediately review your score, correct answers, and detailed explanations.</span>
                                     </li>
+                                    <li className="flex items-start">
+                                        <CheckCircle2 className="mr-2 h-5 w-5 text-green-600 shrink-0 mt-0.5" />
+                                        <span><strong>Download Results:</strong> After completing the test, you can download a PDF copy of your results, including all questions and explanations.</span>
+                                    </li>
                                 </ul>
                             </CardContent>
                         </Card>
