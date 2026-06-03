@@ -263,8 +263,8 @@ export function TestTaker({ test, initialQuestions }: TestTakerProps) {
                                             const isThisCorrect = q.correctAnswer === optIdx;
                                             const didUserPickThis = userAnswer === optIdx.toString();
                                             
-                                            // Requirements: "Wrong answers: Should not be shown in final result analysis" -> we conceal the right answer if they got it wrong.
-                                            const revealCorrect = isUserCorrect;
+                                            // Always show the correct answer and explanation after submission
+                                            const revealCorrect = true;
 
                                             let badgeClasses = "bg-muted text-foreground border";
                                             if (revealCorrect && isThisCorrect) badgeClasses = "bg-green-100/50 border-green-500/50 text-green-900 dark:text-green-100";
@@ -285,7 +285,7 @@ export function TestTaker({ test, initialQuestions }: TestTakerProps) {
                                         })}
                                     </div>
 
-                                    {q.explanation && isUserCorrect && (
+                                    {q.explanation && (
                                         <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-100 dark:border-blue-900">
                                             <p className="text-sm font-semibold text-blue-800 dark:text-blue-300 mb-1 flex items-center">
                                                 <AlertCircle className="w-4 h-4 mr-1.5" /> Explanation
@@ -312,34 +312,54 @@ export function TestTaker({ test, initialQuestions }: TestTakerProps) {
 
     const currentQuestion = activeQuestions[currentQuestionIndex];
 
+    const handleOptionSelect = (qId: number, val: string) => {
+        setAnswers(prev => {
+            if (prev[qId] === val) {
+                const newAnswers = { ...prev };
+                delete newAnswers[qId];
+                return newAnswers;
+            }
+            return { ...prev, [qId]: val };
+        });
+    };
+
     const OptionsList = ({ q }: { q: any }) => (
         <RadioGroup 
             value={answers[q.id] || ""}
-            onValueChange={(val) => setAnswers(prev => ({...prev, [q.id]: val}))}
+            onValueChange={(val) => handleOptionSelect(q.id, val)}
             className="space-y-4"
         >
-            {q.options.map((option: string, idx: number) => (
-                <div key={idx} className="flex">
-                    <Label 
-                        htmlFor={`q${q.id}-opt${idx}`} 
-                        className={`flex-1 flex items-center p-4 border rounded-xl cursor-pointer hover:bg-muted/50 transition-colors
-                            ${answers[q.id] === idx.toString() ? 'border-primary ring-1 ring-primary bg-primary/5' : 'border-input'}
-                        `}
-                    >
-                        <RadioGroupItem 
-                            value={idx.toString()} 
-                            id={`q${q.id}-opt${idx}`} 
-                            className="sr-only" 
-                        />
-                        <div className={`w-7 h-7 rounded-full flex items-center justify-center mr-4 text-sm font-bold border shrink-0 transition-colors
-                            ${answers[q.id] === idx.toString() ? 'bg-primary text-primary-foreground border-primary' : 'text-muted-foreground border-input'}
-                        `}>
-                            {String.fromCharCode(65 + idx)}
-                        </div>
-                        <span className="text-base font-normal">{option}</span>
-                    </Label>
-                </div>
-            ))}
+            {q.options.map((option: string, idx: number) => {
+                const val = idx.toString();
+                return (
+                    <div key={idx} className="flex">
+                        <Label 
+                            htmlFor={`q${q.id}-opt${idx}`} 
+                            onClick={(e) => {
+                                // If already selected, handleOptionSelect will toggle it off
+                                if (answers[q.id] === val) {
+                                    handleOptionSelect(q.id, val);
+                                }
+                            }}
+                            className={`flex-1 flex items-center p-4 border rounded-xl cursor-pointer hover:bg-muted/50 transition-colors
+                                ${answers[q.id] === val ? 'border-primary ring-1 ring-primary bg-primary/5' : 'border-input'}
+                            `}
+                        >
+                            <RadioGroupItem 
+                                value={val} 
+                                id={`q${q.id}-opt${idx}`} 
+                                className="sr-only" 
+                            />
+                            <div className={`w-7 h-7 rounded-full flex items-center justify-center mr-4 text-sm font-bold border shrink-0 transition-colors
+                                ${answers[q.id] === val ? 'bg-primary text-primary-foreground border-primary' : 'text-muted-foreground border-input'}
+                            `}>
+                                {String.fromCharCode(65 + idx)}
+                            </div>
+                            <span className="text-base font-normal">{option}</span>
+                        </Label>
+                    </div>
+                );
+            })}
         </RadioGroup>
     );
 
